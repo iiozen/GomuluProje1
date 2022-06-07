@@ -1,0 +1,22 @@
+.metadata
+
+# 103c8 Dosyası
+103c8/*
+!103c8/Core
+!103c8/Debug
+103c8/Debug/*
+!103c8/Debug/103c8.hex
+
+103c8/Core/*
+!103c8/Core/Src
+
+103c8/Core/Src/*
+!103c8/Core/Src/main.c
+
+# Proteus Dosyası
+proteus/*
+!proteus/proje.pdsprj
+
+# Python Dosyası
+python/*
+!python/main.py
