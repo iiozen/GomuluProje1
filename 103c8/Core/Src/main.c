@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+char* yazi = " ";
+int a =0;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,8 +53,10 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART3_UART_Init(void);
-/* USER CODE BEGIN PFP */
 
+/* USER CODE BEGIN PFP */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void LedYak(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -92,14 +96,16 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  //HAL_UART_Receive_IT(&huart1, yazi, 1);
 
+  HAL_UART_Receive_IT(&huart3, yazi, 1);
+  HAL_UART_Receive_IT(&huart1, yazi, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -237,6 +243,68 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	LedYak();
+    HAL_UART_Receive_IT(huart, yazi, 1);
+
+/*
+	if(huart == &huart1)
+	{
+
+
+
+	}
+	if(huart == &huart3)
+	{
+		HAL_GPIO_TogglePin(GPIOA, LED3_Pin);
+	}
+*/
+}
+void LedYak(void)
+{
+	if (a==0)
+	{
+
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
+	}
+	else if(a ==1)
+	{
+
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
+	}
+	else if(a ==2)
+	{
+
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
+	}
+	else if(a ==3)
+	{
+
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_SET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
+		a=-1;
+	}
+	a++;
+}
 
 /* USER CODE END 4 */
 
