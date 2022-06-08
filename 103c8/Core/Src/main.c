@@ -21,9 +21,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
-char* yazi = " ";
-int a =0;
+#include "stdio.h"
+#include "string.h"
+char uart1[2];
+char uart3[2];
+//uint8_t* uart1;
+char* son_komut="";
+int uart1_adet = 2;
+int uart3_adet = 1;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,10 +58,12 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART3_UART_Init(void);
-
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void LedYak(void);
+void LedSondur(void);
+void Yap(void);
+void Yapildi(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,11 +102,11 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+  HAL_UART_Receive_IT(&huart1, uart1, uart1_adet);
+  HAL_UART_Receive_IT(&huart3, uart3, uart3_adet);
 
-  //HAL_UART_Receive_IT(&huart1, yazi, 1);
-
-  HAL_UART_Receive_IT(&huart3, yazi, 1);
-  HAL_UART_Receive_IT(&huart1, yazi, 1);
+HAL_UART_Transmit(&huart1, "UAART1\r\n", 8, 100);
+HAL_UART_Transmit(&huart3, "UAART3\r\n", 8, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -245,65 +252,71 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	LedYak();
-    HAL_UART_Receive_IT(huart, yazi, 1);
 
-/*
 	if(huart == &huart1)
 	{
+		Yap();
+
+		HAL_UART_Receive_IT(&huart1, uart1, uart1_adet);
 
 
 
 	}
-	if(huart == &huart3)
-	{
-		HAL_GPIO_TogglePin(GPIOA, LED3_Pin);
-	}
-*/
+
 }
-void LedYak(void)
+
+void Yap(void)
 {
-	if (a==0)
-	{
 
+	//if(strcmp(son_komut,uart1)  == 0)
+
+	if(strcmp(uart1,son_komut)  != 0)
+	{
 		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-	}
-	else if(a ==1)
-	{
+		if(strncmp(uart1,"L",1) == 0 )
+		{
 
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-	}
-	else if(a ==2)
-	{
+			if(strcmp(&uart1[1],"0")==0)
+			{
+				LedSondur();
+			}
+			else if(strcmp(&uart1[1],"1") == 0)
+			{
+				LedYak();
+			}
+		}
 
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-	}
-	else if(a ==3)
-	{
-
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_SET);
+		Yapildi();
+		strcpy(son_komut,uart1);
 	}
 	else
 	{
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-		a=-1;
+		Yapildi();
 	}
-	a++;
+
+}
+
+void LedYak(void)
+{
+
+	HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_SET);
+}
+
+void LedSondur(void)
+{
+	HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
+}
+
+void Yapildi(void)
+{
+	HAL_UART_Transmit(&huart3, "1", 1, 100);
+
 }
 
 /* USER CODE END 4 */

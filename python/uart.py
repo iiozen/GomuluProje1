@@ -1,4 +1,9 @@
+from base64 import encode
 import serial
+import io
+import sys
+if sys.version_info[0]>=3:
+    unicode = str
 
 class UART():
     def __init__(self,port:str,baudrate:int,timeout=float):
@@ -13,12 +18,35 @@ class UART():
         return self.uart.is_open
         
     def Yaz(self,yazi:str):
-        yazi = bytes(yazi,"ascii")
+        
+        yazi = bytes(yazi,"utf-8")
+        print(yazi)
         self.uart.write(yazi)
         
+        # yazi = yazi.encode("ascii")
+        # print(yazi)
+        # self.uart.write(yazi)
+        
+        # sio = io.TextIOWrapper(io.BufferedRWPair(self.uart,self.uart))
+        # sio.write(unicode(yazi))
+        # sio.flush()
+        
+        
     def Oku(self,adet=2):
-        self.uart.read(adet)
-        
-        
-
+        # sio = io.TextIOWrapper(io.BufferedRWPair(self.uart,self.uart))
+        # sio.flush()
+        # return sio.read(adet)
+        return self.uart.read(adet)
+    
+    
+    
+def Komut(uart1,uart2,komut:str):
+    uart1.Yaz(komut)
+    print(uart2.Oku())
+    
+    # for i in komut:
+    #     gelen = None
+    #     while(gelen!=i):
+    #         uart1.Yaz(yazi=i)
+    #         gelen = uart2.Oku()
         
