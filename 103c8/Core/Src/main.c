@@ -252,9 +252,16 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 }
 /*
- * KOMUTA GÖRE YAPILAN İŞLEMİN TAMAMLANMASI DURUMUNDA GERİ
- * BİLDİRİM GÖNDEREN FONKSİYON
+ * TİMER İNTERRUPT EKLENDİKTEN SONRA BELİRLİ BİR SÜRE BOYUNCA
+ * UART1'DEN HİÇ VERİ ALINAMAMASI DURUMUNDA UART1 BU FONKSİYON
+ * İLE RESETLENECEK
  */
+void UartReset(void)
+{
+	HAL_UART_AbortReceive_IT(&huart1);
+	HAL_UART_Receive_IT(&huart1, uart1, UART1_ADET);
+}
+
 void Yapildi(void)
 {
 	HAL_UART_Transmit(&huart3, "1", 1, 100);

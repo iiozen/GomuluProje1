@@ -1,9 +1,11 @@
 from uart import UART,Komut
+from degiskenler import HABERLESD,UARTD
 
-uart1= UART(port= "COM2",baudrate= 115200,timeout=0.01)
-uart2= UART(port= "COM3",baudrate= 115200,timeout=0.01)
+uart1= UART(uart= UARTD["uart1"])
+uart2= UART(uart= UARTD["uart2"])
 
-Komut(uart1= uart1,uart2= uart2,komut= "L0")
+komut = Komut(uart1= uart1,uart2= uart2,zamanasimi=HABERLESD["zamanasimi"])
+komut.Haberles(komut= "L1")
 
 uart1.close()
 uart2.close()

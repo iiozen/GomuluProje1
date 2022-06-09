@@ -67,6 +67,7 @@ void Error_Handler(void);
 #define LED4_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 void Yapildi(void);
+void UartReset(void);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
