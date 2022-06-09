@@ -9,9 +9,13 @@
 
 103c8/Core/*
 !103c8/Core/Src
+!103c8/Core/Inc
 
 103c8/Core/Src/*
-!103c8/Core/Src/main.c
+!103c8/Core/Src/**.c
+
+103c8/Core/Inc/*
+!103c8/Core/Inc/**.h
 
 # Proteus Dosyası
 proteus/*

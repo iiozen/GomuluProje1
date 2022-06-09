@@ -1,9 +1,5 @@
-from base64 import encode
 import serial
-import io
-import sys
-if sys.version_info[0]>=3:
-    unicode = str
+import time
 
 class UART():
     def __init__(self,port:str,baudrate:int,timeout=float):
@@ -20,33 +16,36 @@ class UART():
     def Yaz(self,yazi:str):
         
         yazi = bytes(yazi,"utf-8")
-        print(yazi)
         self.uart.write(yazi)
         
-        # yazi = yazi.encode("ascii")
-        # print(yazi)
-        # self.uart.write(yazi)
         
-        # sio = io.TextIOWrapper(io.BufferedRWPair(self.uart,self.uart))
-        # sio.write(unicode(yazi))
-        # sio.flush()
-        
-        
-    def Oku(self,adet=2):
-        # sio = io.TextIOWrapper(io.BufferedRWPair(self.uart,self.uart))
-        # sio.flush()
-        # return sio.read(adet)
+    def Oku(self,adet=1):
         return self.uart.read(adet)
-    
-    
-    
+
+
+   
 def Komut(uart1,uart2,komut:str):
-    uart1.Yaz(komut)
-    print(uart2.Oku())
+    yazi = ""
+    okuma = 0
+    baslangic = time.time()
+    yazi = "\x00".join(komut)
     
-    # for i in komut:
-    #     gelen = None
-    #     while(gelen!=i):
-    #         uart1.Yaz(yazi=i)
-    #         gelen = uart2.Oku()
-        
+    while not okuma:
+        uart1.Yaz(yazi = yazi)
+        try:
+            okuma = int(uart2.Oku())
+        except:
+            pass
+        zaman = time.time()-baslangic
+        if (zaman>1):
+            ZamanAsimi()
+            break
+    
+    if okuma ==1:
+        BasariliIslem()
+
+
+def ZamanAsimi():
+    print("Zaman Aşımı")
+def BasariliIslem():
+    print("İşlem Başarılı")
