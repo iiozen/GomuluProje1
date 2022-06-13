@@ -1,11 +1,22 @@
-from uart import UART,Komut
-from degiskenler import HABERLESD,UARTD
+import sys
 
-uart1= UART(uart= UARTD["uart1"])
-uart2= UART(uart= UARTD["uart2"])
+from uart import UART
+from degiskenler import UARTD
 
-komut = Komut(uart1= uart1,uart2= uart2,zamanasimi=HABERLESD["zamanasimi"])
-komut.Haberles(komut= "L1")
+from gui_tarafi import MainWindow
+
+from PyQt6.QtWidgets import QApplication
+
+uart1= UART(uart= UARTD["UART1"])
+uart2= UART(uart= UARTD["UART2"])
+
+uygulama = QApplication(sys.argv)
+
+pencere = MainWindow(uart1=uart1, uart2= uart2)
+pencere.show()
+
+
+uygulama.exec()
 
 uart1.close()
 uart2.close()

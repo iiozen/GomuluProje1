@@ -24,8 +24,10 @@
 #include "stdio.h"
 #include "string.h"
 #include "usart_islemler.h"
-char uart1[2];
-char uart3[2];
+#include "LEDDEF.h"
+
+char uart1[UART1_ADET];
+char uart3[UART3_ADET];
 char* son_komut="";
 /* USER CODE END Includes */
 
@@ -59,6 +61,7 @@ static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void Yapildi(void);
+void Okunan(char veri,char veri2,char veri3);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -264,7 +267,13 @@ void UartReset(void)
 
 void Yapildi(void)
 {
-	HAL_UART_Transmit(&huart3, "1", 1, 100);
+	HAL_UART_Transmit(&huart3, UART3_ONAY, UART3_ADET, 100);
+}
+void Okunan(char veri,char veri2,char veri3)
+{
+	HAL_UART_Transmit(&huart3, veri, 1, 100);
+	HAL_UART_Transmit(&huart3, &veri2, 1, 100);
+	HAL_UART_Transmit(&huart3, veri3, 1, 100);
 }
 
 /* USER CODE END 4 */

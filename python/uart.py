@@ -1,11 +1,13 @@
 import serial
 import time
 
+from degiskenler import HABERLESD
+
 class UART():
     def __init__(self,uart:dict):
-        port = uart["port"]
-        baudrate = uart["baudrate"]
-        timeout = uart["timeout"]
+        port = uart["PORT"]
+        baudrate = uart["BAUDRATE"]
+        timeout = uart["TIMEOUT"]
         self.uart = serial.Serial(port=port,baudrate=baudrate,timeout=timeout)
         self.is_open = self.acikmi()
 
@@ -36,13 +38,13 @@ class Komut():
         yazi = self.GonderimHazirla(komut= komut)
         okuma = 0
         baslangic = time.time()
-        while okuma!=b'1':
+        while okuma!=HABERLESD["ONAY"]:
             okuma = self.GonderveOku(yazi= yazi)
             zaman = time.time()-baslangic
             if (zaman>self.zamanasimi):
                 self.ZamanAsimi()
                 break
-        if okuma == b'1':
+        if okuma == HABERLESD["ONAY"]:
             self.BasariliIslem()
             
     def GonderimHazirla(self,komut:str):
@@ -51,7 +53,7 @@ class Komut():
     
     def GonderveOku(self,yazi:str):
         self.uart1.Yaz(yazi = yazi)
-        okuma = self.uart2.Oku()
+        okuma = self.uart2.Oku(adet= HABERLESD["OKUMA_ADET"])
         print(okuma)
         return okuma
 

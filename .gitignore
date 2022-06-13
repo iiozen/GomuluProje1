@@ -1,4 +1,8 @@
-.metadata
+*
+!.gitignore
+!proteus
+!103c8
+!python
 
 # 103c8 Dosyası
 103c8/*
