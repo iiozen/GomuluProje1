@@ -1,11 +1,8 @@
+from PyQt6.QtCore import QRect
+
 UARTD={
-    "UART1":{
+    "UART":{
         "PORT":"COM2",
-        "BAUDRATE": 115200,
-        "TIMEOUT":0.1
-    },
-    "UART2":{ 
-        "PORT":"COM3",
         "BAUDRATE": 115200,
         "TIMEOUT":0.1
     }
@@ -51,6 +48,22 @@ GUI_LABELD = {
     }
 }
 
-PENCERE_ADLARI={
+PENCERE_ADLARID={
     "BASLANGIC":"Bağlantı Başlat"
+}
+
+QFRAMELERD = {
+    "widget_satir":{
+        "widget_satir_1":{
+        "id":"widget_satir_1",
+        "konum":QRect(0,0,960,140),
+        "stiller":["border:3px solid white"]
+        },
+        "widget_sutun":{
+                "widget_sutun_1":{
+                    
+                }
+            }
+
+    }
 }

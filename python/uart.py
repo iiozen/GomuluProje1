@@ -30,9 +30,8 @@ class UART():
 
 
 class Komut():
-    def __init__(self,uart1,uart2,zamanasimi:int):
-        self.uart1 = uart1
-        self.uart2 = uart2
+    def __init__(self,uart,zamanasimi:int):
+        self.uart = uart
         self.zamanasimi = zamanasimi
     def Haberles(self,komut:str):
         yazi = self.GonderimHazirla(komut= komut)
@@ -52,8 +51,8 @@ class Komut():
         return yazi
     
     def GonderveOku(self,yazi:str):
-        self.uart1.Yaz(yazi = yazi)
-        okuma = self.uart2.Oku(adet= HABERLESD["OKUMA_ADET"])
+        self.uart.Yaz(yazi = yazi)
+        okuma = self.uart.Oku(adet= HABERLESD["OKUMA_ADET"])
         print(okuma)
         return okuma
 

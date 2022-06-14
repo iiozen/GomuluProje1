@@ -4,26 +4,12 @@
  * UART1'DEN GELEN KOMUTA GÖRE YAPILACAK İŞLEMLERİ BELİRLEYEN
  * VE SON KOMUTUN STRİNG DEĞERİNİ DÖNDÜREN FONKSİYON
  */
-char* Yap(UART_HandleTypeDef* huart3,char* uart1,char* son_komut)
+char* Yap(char* uart1,char* son_komut)
 {
 
 	char* komut = uart1[0];
 	char* islem = uart1[1];
 	char* secilen= uart1[2];
-
-	/*
-
-	komut = uart1[0];
-	islem = uart1[1];
-	secilen = uart1[2];
-	*/
-
-	/*
-	sprintf(komut,"%c",uart1[0]);
-	sprintf(islem,"%c",uart1[1]);
-	sprintf(islem2,"%c",uart1[1]);
-	sprintf(secilen,"%c",uart1[2]);
-	*/
 
 	if(strcmp(uart1,son_komut)  != 0)
 	{

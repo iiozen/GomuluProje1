@@ -6,12 +6,12 @@
 #include "string.h"
 #include "LEDDEF.h"
 
-#define UART1_ADET 3
-#define UART3_ADET 1
-#define UART3_ONAY "1"
+#define UART1_RECIEVE_ADET 3
+#define UART1_TRANSMIT_ADET 1
+#define UART1_TRANSMIT_ONAY "1"
 
 
-char* Yap(UART_HandleTypeDef* huart3,char* uart1,char* son_komut);
+char* Yap(char* uart1,char* son_komut);
 void LedYak(char* secim);
 void LedSondur(char* secim);
 
