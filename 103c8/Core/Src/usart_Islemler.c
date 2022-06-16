@@ -16,8 +16,11 @@ char* Yap(char* uart1,char* son_komut)
 		/*
 		 * İŞLEM GELEN VERİNİN İLK HARFİNDEN OKUNUR
 		 */
-
-		if(strcmp(&komut,LED_KOMUT) == 0 )
+		if(strcmp(uart1,BAGLANTI)==0)
+		{
+			Yapildi();
+		}
+		else if(strcmp(&komut,LED_KOMUT) == 0 )
 		{
 			if(strcmp(&islem,LED_SONDUR)==0)
 			{

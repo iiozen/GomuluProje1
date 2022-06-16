@@ -1,19 +1,19 @@
 from PyQt6.QtWidgets import QFrame,QWidget
 from PyQt6.QtCore import QRect
+from stil import Stil
 
 class FrameOlustur(QFrame):
-    def __init__(self,parent:QWidget,id:str,konum,stiller:list):
+    def __init__(self,parent:QWidget,widget_d:dict):
         super().__init__(parent=parent)
+        id = widget_d["id"]
+        konum = widget_d["konum"]
+        stiller = widget_d["stiller"]
         self.setObjectName(id)
         
         if konum!=None:
             self.setGeometry(konum)
+        stil = Stil(id=id,stiller=stiller)
         
-        stilb = "#"+id+"{"
-        stil= ";".join(stiller)
-        stil = stilb+stil+"}"
-        
-        print(stil)
         self.setStyleSheet(stil)
         
         

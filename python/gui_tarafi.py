@@ -2,149 +2,105 @@ from tkinter import Frame
 from PyQt6.QtWidgets import (
                             QMainWindow, QPushButton, QVBoxLayout,
                             QWidget , QRadioButton,QFormLayout,
-                            QHBoxLayout, QLineEdit, QLabel, QFrame,
+                            QLineEdit, QLabel, QFrame,
                             QLayout, QGridLayout
                             )
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer,QRect
+from led_kontrol_panel import Led_Kontrol_Panel
+from stil import Stil
 
-from uart import Komut
+from uart import UART, Komut
 
 from qframe import FrameOlustur
+# from widget import WidgetOlusturucu
 
-from degiskenler import HABERLESD, KOMUTLARD,  GUI_LABELD, QFRAMELERD
+from degiskenler import DEGISENLABELD, HABERLESD, KOMUTLARD, QFRAMELERD, QLAYOUTLARD
+from widget import WidgetDondurur
 
 class AnaPencere(QMainWindow):
-    def __init__(self,uart):
+    def __init__(self):
         super().__init__()
-        self.uart= uart
-        self.komut = Komut(uart= self.uart,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
 
-        # TÜM WİDGETLERİN PARENTİ OLACAK WİDGET
+        self.TanimlarBaslangic()
+
+        ### TÜM WİDGETLERİN PARENTİ OLACAK WİDGET
         ustwidget = QWidget()
-
-        ## WİDGET SATIR  1
-        # widget_satir_1 = QWidget(parent=ustwidget)
-        # widget_satir_1.setGeometry(0,0,960,140)
-
-        ## WİDGET SATIR 1 QFRAME VERSİYONU
-        # widget_satir_1 = QFrame(parent=ustwidget)
-        # widget_satir_1.setObjectName("widget_satir_1")
-        # widget_satir_1.setGeometry(0,0,960,140)
-        # widget_satir_1.setStyleSheet("#widget_satir_1{border:3px solid white}")
-        widget_satir_1d = QFRAMELERD["widget_satir"]["widget_satir_1"]
-        widget_satir_1 = FrameOlustur(parent=ustwidget,id=widget_satir_1d["id"],konum=widget_satir_1d["konum"],stiller=widget_satir_1d["stiller"])
-
-        # WİDGET SÜTUN 1
-        # widget_sutun_1 = QWidget(parent=widget_satir_1)
-        # widget_sutun_1.setGeometry(0,0,320,140)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.Baglanti)
+        ## QFRAME OLUŞTURMA DEĞİŞKENLERİNİN TANIMLAMALARI
+        # QFRAME SATIR DEĞİŞKENLERİ
+        self.widget_satird = QFRAMELERD["widget_satir"]
+        self.widget_satir_1d = self.widget_satird["widget_satir_1"]
+        self.widget_satir_2d = self.widget_satird["widget_satir_2"]
+        # QFRAME SÜTUN DEĞİŞKENLERİ   
+        self.widget_satir_1_sutund = self.widget_satir_1d["widget_sutun"]
+        self.widget_satir_1_sutun_1d = self.widget_satir_1_sutund["widget_sutun_1"]
+        self.widget_satir_1_sutun_2d = self.widget_satir_1_sutund["widget_sutun_2"]
+        self.widget_satir_1_sutun_3d = self.widget_satir_1_sutund["widget_sutun_3"]
         
-        # WİDGET SÜTUN 1 QFRAME VERSİYONU
-        widget_sutun_1 = QFrame(parent=widget_satir_1)
-        widget_sutun_1.setGeometry(0,0,320,140)
-        widget_sutun_1.setObjectName("widget_sutun_1")
-        widget_sutun_1.setStyleSheet("#widget_sutun_1{border:3px solid white}")
-        
-        # WİDGET UART BİLGİLERİ
-        widget_uart_bilgiler = QWidget(parent=widget_sutun_1)
-        
-        layout_sutun_1 = QGridLayout()
-        
-        layout_uart_baslik = QGridLayout()
-        
-        uart_label = QLabel(text="UART İLETİŞİM BİLGİLERİ")
-        uart_label.setStyleSheet("font-weight:bold;font-size:10pt")
-        layout_uart_baslik.addWidget(uart_label)
+        self.widget_satir_2_sutund = self.widget_satir_2d["widget_sutun"]
+        self.widget_satir_2_sutun_1d = self.widget_satir_2_sutund["widget_sutun_1"]
+        self.widget_satir_2_sutun_2d = self.widget_satir_2_sutund["widget_sutun_2"]
+        ## QFRAME SATIR 1
+        widget_satir_1 = FrameOlustur(parent=ustwidget,widget_d=self.widget_satir_1d)
+              
+        # QFRAME SATIR 1 SÜTUN 1 
+        widget_satir_1_sutun_1 = FrameOlustur(parent=widget_satir_1,widget_d=self.widget_satir_1_sutun_1d)
 
-        uartlayout = QFormLayout()
-        uartlayout.setVerticalSpacing(5)
-        portinput = QLineEdit()
-        portinput.setText("COM2")
-
-        baudinput = QLineEdit()
-        baudinput.setText("115200")
-        toinput = QLineEdit()
-        toinput.setText("0.1")
-
-        uartlayout.addRow("Port:",portinput)
-        uartlayout.addRow("Baudrate: ",baudinput)
-        uartlayout.addRow("Timeout: ",toinput)
-        
-        layout_sutun_1.addLayout(layout_uart_baslik,1,1,1,1,Qt.AlignmentFlag.AlignTop)
-        layout_sutun_1.addLayout(uartlayout,2,1,1,1,Qt.AlignmentFlag.AlignBottom)
-        widget_uart_bilgiler.setLayout(layout_sutun_1)
-
-        self.Ortala(eleman = widget_uart_bilgiler,layout=layout_sutun_1)
+        #   SATIR 1 SÜTUN 1     
+        widget_uart_bilgiler = QWidget(parent=widget_satir_1_sutun_1)
+        layout_satir_1_sutun_1 = QGridLayout()
+        self.Satir1_Sutun1(layout_sutun=layout_satir_1_sutun_1)
+        widget_uart_bilgiler.setLayout(layout_satir_1_sutun_1)
+        self.Ortala(eleman = widget_uart_bilgiler,layout=layout_satir_1_sutun_1)
         
 
-        # WİDGET SÜTUN 2
-        # widget_sutun_2 = QWidget(parent=widget_satir_1)
-        # widget_sutun_2.setGeometry(320,0,320,140)
+        # QFRAME SATIR 1 SÜTUN 2
+        widget_satir_1_sutun_2 = FrameOlustur(parent=widget_satir_1,widget_d=self.widget_satir_1_sutun_2d)
+        
+        #   SATIR 1 SÜTUN 2
+        widget_baglanti_bilgiler = QWidget(parent=widget_satir_1_sutun_2)
+        layout_satir_1_sutun_2 = QGridLayout()
+        self.Satir1_Sutun2(layout_sutun=layout_satir_1_sutun_2)
+        widget_baglanti_bilgiler.setLayout(layout_satir_1_sutun_2)
+        self.Ortala(eleman=widget_baglanti_bilgiler,layout=layout_satir_1_sutun_2)
 
-        # WİDGET SÜTUN 2 QFRAME VERSİYONU
-        widget_sutun_2 = QFrame(parent=widget_satir_1)
-        widget_sutun_2.setGeometry(320,0,320,140)
-        widget_sutun_2.setObjectName("widget_sutun_2")
-        widget_sutun_2.setStyleSheet("#widget_sutun_2{border:3px solid white}")
-        
-        # WİDGET BAĞLANTI BİLGİLERİ
-        widget_baglanti_bilgiler = QWidget(parent=widget_sutun_2)
-        
-        layout_sutun_2 = QGridLayout()
-        
-        layout_baglanti_durumu = QFormLayout()
-        
-        self.baglanti_durumu = QLabel("Bekliyor")
-        self.baglanti_durumu.setStyleSheet("font-size:14pt;font-weight:bold;color:gray")
-        baglanti_durumu_label = QLabel("Bağlantı Durumu: ")
-        baglanti_durumu_label.setStyleSheet("font-size:12pt")
-        layout_baglanti_durumu.addRow(baglanti_durumu_label,self.baglanti_durumu)
-        # layout_sutun_2.addWidget(baglanti_durumu_label)
-        
-        layout_baglanti_buton = QGridLayout()
-        self.baglan_buton_label = "BAĞLAN"
-        baglan_buton = QPushButton("%s"%self.baglan_buton_label)
-        baglan_buton.setStyleSheet("font-size:11pt")
-        baglan_buton.setCheckable(False)
-        layout_baglanti_buton.addWidget(baglan_buton)
+        # QFRAME SATIR 1 SÜTUN 3
+        widget_satir_1_sutun_3 = FrameOlustur(parent=widget_satir_1,widget_d=self.widget_satir_1_sutun_3d)
 
-        
-        layout_sutun_2.addLayout(layout_baglanti_durumu,1,1,1,1,Qt.AlignmentFlag.AlignTop)
-        layout_sutun_2.addLayout(layout_baglanti_buton,2,1,1,1,Qt.AlignmentFlag.AlignBottom) 
-        
-         
-        widget_baglanti_bilgiler.setLayout(layout_sutun_2)
-        self.Ortala(eleman=widget_baglanti_bilgiler,layout=layout_sutun_2)
+        #   SATIR 1 SÜTUN 3
+        widget_isim_soyisim = QWidget(parent=widget_satir_1_sutun_3)
+        layout_satir_1_sutun_3 = QVBoxLayout()
+        self.Satir1_Sutun3(layout_satir_1_sutun_3)
+        widget_isim_soyisim.setLayout(layout_satir_1_sutun_3)
+        self.Ortala(eleman=widget_isim_soyisim,layout=layout_satir_1_sutun_3)
 
+        ## QFRAME SATIR 2
+        widget_satir_2 = FrameOlustur(parent=ustwidget,widget_d=self.widget_satir_2d)
 
+        # QFRAME SATIR 2 SÜTUN 1 
+        widget_satir_2_sutun_1 = FrameOlustur(parent=widget_satir_2,widget_d=self.widget_satir_2_sutun_1d)
 
-        # WİDGET SÜTUN 3
-        widget_sutun_3 = QWidget(parent=widget_satir_1)
-        widget_sutun_3.setGeometry(640,0,320,140)
+        #   SATIR 2 SÜTUN 1
+        widget_led_kontrol_panel = QWidget(parent=widget_satir_2_sutun_1)
+        layout_satir_2_sutun_1 = QGridLayout()
+        self.Satir2_Sutun1(layout_sutun=layout_satir_2_sutun_1)
+        widget_led_kontrol_panel.setLayout(layout_satir_2_sutun_1)
+        self.Ortala(eleman=widget_led_kontrol_panel,layout=layout_satir_2_sutun_1)
         
-        # WİDGET İSİM SOYİSİM
-        widget_isim_soyisim = QWidget(parent=widget_sutun_3)
         
-        layout_isim_soyisim = QVBoxLayout()
         
-        isim_soyisim = QLabel("IŞINER İSMAİL ÖZEN")
-        isim_soyisim.setStyleSheet("font-size:16pt;font-weight:bold")
-        layout_isim_soyisim.addWidget(isim_soyisim)
-        kullanilan_mcu = QLabel("STM32F103C8")
-        kullanilan_mcu.setStyleSheet("font-size:12pt;font-style:italic")
-        kullanilan_mcu.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout_isim_soyisim.addWidget(kullanilan_mcu)
-        
-        widget_isim_soyisim.setLayout(layout_isim_soyisim)
-        self.Ortala(eleman=widget_isim_soyisim,layout=layout_isim_soyisim)
-
+        # QFRAME SATIR 2 SÜTUN 2
+        widget_satir_2_sutun_2 = FrameOlustur(parent=widget_satir_2,widget_d=self.widget_satir_2_sutun_2d)
 
         # Ana Widget Ayarları
         self.setCentralWidget(ustwidget)
         self.setGeometry(500,300,960,540)
+        self.setWindowTitle("Gömülü yazılım")
 
 
-
+        
 
 
 
@@ -153,44 +109,20 @@ class AnaPencere(QMainWindow):
         # BAŞLANGIÇ DEĞERİ
         self.led_secim = KOMUTLARD["LED"]["ISLEM"]["LD_SONDUR"]
 
-        self.setWindowTitle("Gömülü yazılım")
-
-        layout = QVBoxLayout()
-
-        # LED SÖNDÜR RADİO BUTONUNU BAŞLANGIÇ OLARAK İŞARETLEDİM
-        LED_SECIM_SONDUR = QRadioButton(GUI_LABELD["LED"]["ISLEM"]["SONDUR"])
-        LED_SECIM_SONDUR.clicked.connect(lambda x: self.Led_Secim(KOMUTLARD["LED"]["ISLEM"]["LD_SONDUR"]))
-        LED_SECIM_SONDUR.setChecked(True)
-        layout.addWidget(LED_SECIM_SONDUR)
-
-        LED_SECIM_YAK = QRadioButton(GUI_LABELD["LED"]["ISLEM"]["YAK"])
-        LED_SECIM_YAK.clicked.connect(lambda x: self.Led_Secim(KOMUTLARD["LED"]["ISLEM"]["LD_YAK"]))
-        layout.addWidget(LED_SECIM_YAK)
-
-        LY0 = QPushButton(GUI_LABELD["LED"]["SECIM"]["HEPSI"])
-        LY0.clicked.connect(lambda x:self.KomutGonder(KOMUTLARD["LED"]["SECIM"]["LD_HEPSI"]))
-        layout.addWidget(LY0)
-
-        LY1 = QPushButton(GUI_LABELD["LED"]["SECIM"]["MAVI"])
-        LY1.clicked.connect(lambda x:self.KomutGonder(KOMUTLARD["LED"]["SECIM"]["LD_MAVI"]))
-        layout.addWidget(LY1)
-
-        LY2 = QPushButton(GUI_LABELD["LED"]["SECIM"]["YESIL"])
-        LY2.clicked.connect(lambda x:self.KomutGonder(KOMUTLARD["LED"]["SECIM"]["LD_YESIL"]))
-        layout.addWidget(LY2)
-
-        LY3 = QPushButton(GUI_LABELD["LED"]["SECIM"]["KIRMIZI"])
-        LY3.clicked.connect(lambda x:self.KomutGonder(KOMUTLARD["LED"]["SECIM"]["LD_KIRMIZI"]))
-        layout.addWidget(LY3)
-
-        LY4 = QPushButton(text= GUI_LABELD["LED"]["SECIM"]["SARI"])
-        LY4.clicked.connect(lambda x:self.KomutGonder(KOMUTLARD["LED"]["SECIM"]["LD_SARI"]))
-        layout.addWidget(LY4)
+    def TanimlarBaslangic(self):
+        self.ilkbaglanti = True
+        self.baglanti_buton_basildi=False
+        self.led_kontrol_panel_acik = False
 
 
     def KomutGonder(self,komut:str):
+        self.KomutVar(True)
         komut = self.led_secim+komut
-        self.komut.Haberles(komut= komut)
+        basari = self.komut.Haberles(komut= komut)
+        if not basari:
+            self.Baglanti()
+        self.KomutVar(False)
+        
 
 
     def Led_Secim(self,secim:str):
@@ -206,3 +138,287 @@ class AnaPencere(QMainWindow):
         a,b = layoutsize.width()/2,layoutsize.height()/2
         eleman.move(a1-a,b1-b)
         
+        
+    def Satir1_Sutun1(self,layout_sutun):
+        layout_sutun = layout_sutun
+        layout_baslik = QGridLayout()
+        layout_uart = QFormLayout()
+        
+        #   SATIR 1 SÜTUN 1 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_1d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        layout_2d = sutun_d["layout_2_widgetlar"]
+        
+        
+        layout_1_widget_1d = layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_1_widget_1d)
+        uart_label = QLabel(text=text)
+        uart_label.setStyleSheet(stil)
+        uart_label.setAlignment(hiza)
+        layout_baslik.addWidget(uart_label)
+
+        layout_2_widget_1d = layout_2d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_1d)
+        self.portinput = QLineEdit()
+        self.portinput.setText(text)
+
+        layout_2_widget_2d = layout_2d["widget_2"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_2d)
+        self.baudinput = QLineEdit()
+        self.baudinput.setText(text)
+        
+        layout_2_widget_3d = layout_2d["widget_3"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_3d)
+        self.toinput = QLineEdit()
+        self.toinput.setText(text)
+
+        layout_uart.addRow("Port:",self.portinput)
+        layout_uart.addRow("Baudrate: ",self.baudinput)
+        layout_uart.addRow("Timeout: ",self.toinput)
+        
+        layout_sutun.addLayout(layout_baslik,1,1,1,1,Qt.AlignmentFlag.AlignTop)
+        layout_sutun.addLayout(layout_uart,2,1,1,1,Qt.AlignmentFlag.AlignBottom)
+    
+    
+    def Satir1_Sutun2(self,layout_sutun):
+        layout_sutun = layout_sutun
+        layout_baglanti_durumu = QFormLayout()
+        layout_baglanti_buton = QGridLayout()
+        
+        #   SATIR 1 SÜTUN 2 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_2d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        layout_2d = sutun_d["layout_2_widgetlar"]
+        
+        layout_1_widget_1d = layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_1_widget_1d)
+        self.baglanti_durumu = QLabel(text=text)
+        self.baglanti_durumu.setStyleSheet(stil)
+        
+        layout_1_widget_2d = layout_1d["widget_2"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_1_widget_2d)
+        baglanti_durumu_label = QLabel(text=text)
+        baglanti_durumu_label.setStyleSheet(stil)
+        layout_baglanti_durumu.addRow(baglanti_durumu_label,self.baglanti_durumu)
+        
+        
+        layout_2_widget_1d = layout_2d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_1d)
+        self.baglan_buton = QPushButton(text)
+        self.baglan_buton.setStyleSheet(stil)
+        self.baglan_buton.setCheckable(False)
+        self.baglan_buton.clicked.connect(self.BaglantiButonConnect)
+        layout_baglanti_buton.addWidget(self.baglan_buton)
+
+        
+        layout_sutun.addLayout(layout_baglanti_durumu,1,1,1,1,Qt.AlignmentFlag.AlignTop)
+        layout_sutun.addLayout(layout_baglanti_buton,2,1,1,1,Qt.AlignmentFlag.AlignBottom) 
+        
+    
+    def Satir1_Sutun3(self,layout_sutun):
+        layout_sutun = layout_sutun
+
+        #   SATIR 1 SÜTUN 3 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_3d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        
+        layout_1_widget_1d = layout_1d["widget_1"]        
+        text,stil,hiza = WidgetDondurur(widget_d = layout_1_widget_1d)
+        isim_soyisim = QLabel(text)
+        isim_soyisim.setStyleSheet(stil)
+        layout_sutun.addWidget(isim_soyisim)
+        
+        layout_1_widget_2d = layout_1d["widget_2"]        
+        text,stil,hiza = WidgetDondurur(widget_d = layout_1_widget_2d)
+        kullanilan_mcu = QLabel(text)
+        kullanilan_mcu.setStyleSheet(stil)
+        kullanilan_mcu.setAlignment(hiza)
+        layout_sutun.addWidget(kullanilan_mcu)
+        
+        
+        
+    def Satir2_Sutun1(self,layout_sutun:QWidget):
+        layout_sutun=layout_sutun
+        
+        #   SATIR 2 SÜTUN 1 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_2d"]["layout_sutun_1d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        
+        layout_1_widget_1d= layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d=layout_1_widget_1d)
+        self.led_kontrol_panel = QPushButton(text)
+        self.led_kontrol_panel.setStyleSheet(stil)
+        self.led_kontrol_panel.setCheckable(False)
+        self.led_kontrol_panel.setDisabled(True)
+        self.led_kontrol_panel.clicked.connect(lambda x:self.LedKontrolPanel(layout_sutun=layout_sutun,buton = self.led_kontrol_panel))
+        layout_sutun.addWidget(self.led_kontrol_panel)
+        
+        
+        
+        
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+        
+    def Panel_Butonlar(self,aktif:bool):
+        if aktif:
+            self.led_kontrol_panel.setEnabled(True)
+        else:
+            self.led_kontrol_panel.setEnabled(False)
+            self.Panel_Pencereler()
+            
+            
+    def Panel_Pencereler(self):
+        if self.led_kontrol_panel_acik:
+            self.led_kontrol_panel_pencere.close()
+        
+        
+    def LedKontrolPanel(self,layout_sutun:QWidget,buton:QWidget):
+        if not self.led_kontrol_panel_acik:
+            self.led_kontrol_panel_pencere = Led_Kontrol_Panel(parent=self)
+            self.Panel_Konumlandir(panel = self.led_kontrol_panel_pencere,satir=self.widget_satir_2d,sutun=self.widget_satir_2_sutun_1d,layout_sutun=layout_sutun,buton=buton)
+            
+        
+
+
+    def Panel_Konumlandir(self,panel:QMainWindow,satir:dict,sutun:dict,layout_sutun:QWidget,buton:QWidget):
+        x,y,x_,y_ = self.geometry().getRect()
+        x1,y1,x1_,y1_ = satir["konum"].getRect()
+        x2,y2,x2_,y2_ = sutun["konum"].getRect()
+        x3,y3,x3_,y3_ = layout_sutun.parent().geometry().getRect()
+        x4,y4,x4_,y4_ = buton.geometry().getRect()
+        
+        panel_x = x+x1+x2+x3+x3_
+        panel_y = y+y1+y2+y3+y4
+
+        panel.move(panel_x,panel_y)
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+    def BaglantiButonConnect(self):
+        if self.baglanti_buton_basildi:
+            self.BaglantiDurdur()
+        else:
+            self.Baglanti()
+        self.baglanti_buton_basildi = not self.baglanti_buton_basildi
+        
+        
+    def Baglanti(self):
+        self.KomutVar(True)
+        if not self.ilkbaglanti:
+            if self.uart.is_open:
+                self.uart.close()
+        self.uart = UART(port=self.portinput.text(),baudrate=float(self.baudinput.text()),timeout=float(self.toinput.text()))
+        buton = DEGISENLABELD["BUTON"]
+        label = DEGISENLABELD["LABEL"]
+        if self.uart.baglandi:
+            self.komut = Komut(uart= self.uart,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
+            basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
+            if basari:
+                self.Basari(buton=buton,label=label)
+            else:
+                self.Basarisiz(buton=buton,label=label)
+        else:
+            self.Basarisiz(buton=buton,label=label)
+
+        ## BAĞLANTI BAŞARILI OLUNCAYA KADAR DİĞER TÜM BUTONLAR DİSABLE MODDA OLACAK
+        
+        self.ilkbaglanti=False
+        self.LineEditYazilabilirlik(False)
+        self.KomutVar(False)
+        
+        
+    def StartStopTimer(self,start:bool):
+        #   TIMER INTERRUPT İLE HER İSTENİLEN SANİYEDE BİR ÇALIŞAN KOMUT YOK İSE BAĞLANTI KONTROL EDİLECEK
+        timeout = HABERLESD["TIMER"]
+        if start:
+            self.timer.start(timeout)
+        else:
+            self.timer.stop()
+        
+    def Basari(self,buton:dict,label:dict):
+        self.Panel_Butonlar(True)
+        
+        basarili_buton_text = buton["BAGLANTI"]["BASARILI"]
+        basarili_baglanti_durumu = label["BAGLANTI"]["BASARILI"]
+        basarili_baglanti_durumu_text = basarili_baglanti_durumu["TEXT"]
+        stiller = basarili_baglanti_durumu["STIL"]
+        basarili_baglanti_durumu_stil = Stil(id=None,stiller=stiller)
+        self.baglan_buton.setText(basarili_buton_text)
+        self.baglanti_durumu.setText(basarili_baglanti_durumu_text)
+        self.baglanti_durumu.setStyleSheet(basarili_baglanti_durumu_stil)
+        
+    def Basarisiz(self,buton:dict,label:dict):
+        self.Panel_Butonlar(False)
+        
+        basarisiz_buton_text = buton["BAGLANTI"]["BASARISIZ"]
+        basarisiz_baglanti_durumu = label["BAGLANTI"]["BASARISIZ"]
+        basarisiz_baglanti_durumu_text = basarisiz_baglanti_durumu["TEXT"]
+        stiller = basarisiz_baglanti_durumu["STIL"]
+        basarisiz_baglanti_durumu_stil = Stil(id=None,stiller=stiller)
+        self.baglan_buton.setText(basarisiz_buton_text)
+        self.baglanti_durumu.setText(basarisiz_baglanti_durumu_text)
+        self.baglanti_durumu.setStyleSheet(basarisiz_baglanti_durumu_stil)
+        
+    def BaglantiDurdur(self):
+        self.Panel_Butonlar(False)
+        
+        self.timer.stop()
+        if not self.ilkbaglanti:
+            if self.uart.is_open:
+                self.uart.close()
+        buton = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_2d"]["layout_2_widgetlar"]["widget_1"]
+        durum = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_2d"]["layout_1_widgetlar"]["widget_1"]
+        # BUTON EN BAŞTAKİ HALE GETİRİLDİ
+        text,stil,hiza = WidgetDondurur(widget_d = buton)
+        self.baglan_buton.setText(text)
+        self.baglan_buton.setStyleSheet(stil)
+        
+        # DURUM LABEL EN BAŞTAKİ HALE GETİRİLDİ
+        text,stil,hiza = WidgetDondurur(widget_d = durum)
+        self.baglanti_durumu.setText(text)
+        self.baglanti_durumu.setStyleSheet(stil)
+        
+        self.LineEditYazilabilirlik(True)
+        
+    def KomutVar(self,islemdemi:bool):
+        if islemdemi:
+            self.StartStopTimer(False)           
+        else:
+            self.StartStopTimer(True)
+            
+    def LineEditYazilabilirlik(self,olsun:bool):
+        if olsun:
+            self.portinput.setEnabled(True)
+            self.baudinput.setEnabled(True)
+            self.toinput.setEnabled(True)
+        else:
+            self.portinput.setDisabled(True)
+            self.baudinput.setDisabled(True)
+            self.toinput.setDisabled(True)
+            
+            
+    def closeEvent(self,event):
+        if not self.ilkbaglanti:
+            if self.uart.is_open:
+                self.uart.close()

@@ -4,12 +4,18 @@ import time
 from degiskenler import HABERLESD
 
 class UART():
-    def __init__(self,uart:dict):
-        port = uart["PORT"]
-        baudrate = uart["BAUDRATE"]
-        timeout = uart["TIMEOUT"]
-        self.uart = serial.Serial(port=port,baudrate=baudrate,timeout=timeout)
-        self.is_open = self.acikmi()
+    def __init__(self,port:str,baudrate:int,timeout:int):
+        self.baglandi = False
+        try:
+            self.uart = serial.Serial(port=port,baudrate=baudrate,timeout=timeout)
+            self.baglandi = True
+            self.is_open = self.acikmi()
+        except:
+            self.baglandi = False
+            self.is_open = False
+            
+            
+        
 
     def close(self):
         self.uart.close()
@@ -41,11 +47,9 @@ class Komut():
             okuma = self.GonderveOku(yazi= yazi)
             zaman = time.time()-baslangic
             if (zaman>self.zamanasimi):
-                self.ZamanAsimi()
-                break
+                return False
         if okuma == HABERLESD["ONAY"]:
-            self.BasariliIslem()
-            
+            return True            
     def GonderimHazirla(self,komut:str):
         yazi = "\x00".join(komut)
         return yazi
@@ -53,7 +57,6 @@ class Komut():
     def GonderveOku(self,yazi:str):
         self.uart.Yaz(yazi = yazi)
         okuma = self.uart.Oku(adet= HABERLESD["OKUMA_ADET"])
-        print(okuma)
         return okuma
 
     def ZamanAsimi(self):

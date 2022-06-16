@@ -7,15 +7,11 @@ from gui_tarafi import AnaPencere
 
 from PyQt6.QtWidgets import QApplication
 
-uart= UART(uart= UARTD["UART"])
-
-
 uygulama = QApplication(sys.argv)
 
-anapencere = AnaPencere(uart=uart)
+anapencere = AnaPencere()
 anapencere.show()
 
 
 uygulama.exec()
 
-uart.close()
