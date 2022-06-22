@@ -65,6 +65,10 @@ void Error_Handler(void);
 #define LED3_GPIO_Port GPIOA
 #define LED4_Pin GPIO_PIN_7
 #define LED4_GPIO_Port GPIOA
+#define I2C_LED_Pin GPIO_PIN_0
+#define I2C_LED_GPIO_Port GPIOB
+#define I2C_MOTOR_Pin GPIO_PIN_1
+#define I2C_MOTOR_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 void Yapildi(void);
 void UartReset(void);

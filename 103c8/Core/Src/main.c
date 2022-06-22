@@ -18,18 +18,23 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "string.h"
 #include "usart_islemler.h"
-#include "LEDDEF.h"
+#include "I2C_LED.h"
 
-char UART1_RECIEVE[UART1_RECIEVE_ADET];
-char UART1_TRANSMIT[UART1_TRANSMIT_ADET];
+char* UART1_RECIEVE[UART1_RECIEVE_ADET];
+char* UART1_TRANSMIT[UART1_TRANSMIT_ADET];
 
-char* son_komut="";
+int tim2_sayici_led = 0;
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +52,6 @@ char* son_komut="";
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
@@ -55,11 +59,11 @@ char* son_komut="";
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void Yapildi(void);
+void Yapilamadi(void);
 void Okunan(char veri,char veri2,char veri3);
 /* USER CODE END PFP */
 
@@ -97,8 +101,19 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
+
+
+  HAL_TIM_Base_Start_IT(&htim2);
+  /* BASLANGIÇ İÇİN TÜM LEDLERİ SÖNDÜRÜYORUM */
+  I2C_LED_SONDUR(0xFFFF);
+
+  /* BA�?LANGIÇ İÇİN MOTORUN HIZINI 0LIYORUM */
+  I2C_MOTOR(0);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -150,87 +165,55 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED1_Pin|LED2_Pin|LED3_Pin|LED4_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : LED1_Pin LED2_Pin LED3_Pin LED4_Pin */
-  GPIO_InitStruct.Pin = LED1_Pin|LED2_Pin|LED3_Pin|LED4_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-}
-
 /* USER CODE BEGIN 4 */
+/* USART VERİ OKUMA İNTERRUPT */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart == &huart1)
 	{
-		son_komut = Yap(UART1_RECIEVE,son_komut);
-		HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
+
+		Yap(UART1_RECIEVE);
+
 	}
 
 }
-/*
- * TİMER İNTERRUPT EKLENDİKTEN SONRA BELİRLİ BİR SÜRE BOYUNCA
- * UART1'DEN HİÇ VERİ ALINAMAMASI DURUMUNDA UART1 BU FONKSİYON
- * İLE RESETLENECEK
- */
-void UartReset(void)
+void HAL_UART_AbortCpltCallback(UART_HandleTypeDef *huart)
 {
-	HAL_UART_AbortReceive_IT(&huart1);
-	HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
+	if (huart == &huart1)
+	{
+		UartReset();
+	}
 }
+/* TİMER İNTERRUPT */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+
+
+	if(htim == &htim2)
+	{
+		tim2_sayici_led++;
+
+		if (I2C_LED_OTOMATIK_ARTIR)
+		  {
+			  if(tim2_sayici_led >= I2C_LED_DELAY_MS)
+			  {
+				  tim2_sayici_led = 0;
+				  I2C_LED_SIRALI();
+			  }
+		  }
+	}
+
+}
+
 
 void Yapildi(void)
 {
-	HAL_UART_Transmit(&huart1, UART1_TRANSMIT_ONAY, UART1_TRANSMIT_ADET, 100);
+	HAL_UART_Transmit(&huart1, UART1_TRANSMIT_ONAY, UART1_TRANSMIT_ADET, HAL_MAX_DELAY);
+	HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
+}
+void Yapilamadi(void)
+{
+	HAL_UART_Transmit(&huart1, "0", UART1_TRANSMIT_ADET, HAL_MAX_DELAY);
 }
 /* USER CODE END 4 */
 

@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt, QTimer,QRect
 from led_kontrol_panel import Led_Kontrol_Panel
+from i2c_motor_surucu import I2C_MOTOR_SURUCU
 from stil import Stil
 
 from uart import UART, Komut
@@ -79,6 +80,9 @@ class AnaPencere(QMainWindow):
         ## QFRAME SATIR 2
         widget_satir_2 = FrameOlustur(parent=ustwidget,widget_d=self.widget_satir_2d)
 
+        # SATIR 2 ORTAK BAŞLIK OLUŞTURMA
+        self.SatirBaslikOlustur(widget_satir_2,"I2C")
+        
         # QFRAME SATIR 2 SÜTUN 1 
         widget_satir_2_sutun_1 = FrameOlustur(parent=widget_satir_2,widget_d=self.widget_satir_2_sutun_1d)
 
@@ -93,7 +97,14 @@ class AnaPencere(QMainWindow):
         
         # QFRAME SATIR 2 SÜTUN 2
         widget_satir_2_sutun_2 = FrameOlustur(parent=widget_satir_2,widget_d=self.widget_satir_2_sutun_2d)
-
+        
+        #   SATIR 2 SÜTUN 2
+        widget_i2c_motor_surucu = QWidget(parent=widget_satir_2_sutun_2)
+        layout_satir_2_sutun_2 = QGridLayout()
+        self.Satir2_Sutun2(layout_sutun=layout_satir_2_sutun_2)
+        widget_i2c_motor_surucu.setLayout(layout_satir_2_sutun_2)
+        self.Ortala(eleman=widget_i2c_motor_surucu,layout=layout_satir_2_sutun_2)
+        
         # Ana Widget Ayarları
         self.setCentralWidget(ustwidget)
         self.setGeometry(500,300,960,540)
@@ -107,17 +118,26 @@ class AnaPencere(QMainWindow):
         ## Buton Sınıfından Çekilerek Yapılacak
 
         # BAŞLANGIÇ DEĞERİ
-        self.led_secim = KOMUTLARD["LED"]["ISLEM"]["LD_SONDUR"]
+        
 
+    def SatirBaslikOlustur(self,parent:QWidget,text:str):
+        layout = QGridLayout(parent=parent)
+        baslik = QLabel(text=text)
+        baslik.setStyleSheet("font-weight:bold;font-size:12pt")
+        layout.addWidget(baslik)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        
     def TanimlarBaslangic(self):
         self.ilkbaglanti = True
         self.baglanti_buton_basildi=False
         self.led_kontrol_panel_acik = False
+        self.motor_surucu_panel_acik = False
+        
 
 
     def KomutGonder(self,komut:str):
         self.KomutVar(True)
-        komut = self.led_secim+komut
         basari = self.komut.Haberles(komut= komut)
         if not basari:
             self.Baglanti()
@@ -254,6 +274,23 @@ class AnaPencere(QMainWindow):
         layout_sutun.addWidget(self.led_kontrol_panel)
         
         
+    def Satir2_Sutun2(self,layout_sutun:QWidget):
+        layout_sutun=layout_sutun
+        
+        #   SATIR 2 SÜTUN 2 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_2d"]["layout_sutun_2d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        
+        layout_1_widget_1d= layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d=layout_1_widget_1d)
+        self.motor_surucu_panel = QPushButton(text)
+        self.motor_surucu_panel.setStyleSheet(stil)
+        self.motor_surucu_panel.setCheckable(False)
+        self.motor_surucu_panel.setDisabled(True)
+        self.motor_surucu_panel.clicked.connect(lambda x:self.MotorKontrolPanel(layout_sutun=layout_sutun,buton = self.motor_surucu_panel))
+        layout_sutun.addWidget(self.motor_surucu_panel)
+        
+        
         
         
         
@@ -270,23 +307,35 @@ class AnaPencere(QMainWindow):
     def Panel_Butonlar(self,aktif:bool):
         if aktif:
             self.led_kontrol_panel.setEnabled(True)
+            self.motor_surucu_panel.setEnabled(True)
+            
         else:
             self.led_kontrol_panel.setEnabled(False)
+            self.motor_surucu_panel.setEnabled(False)
             self.Panel_Pencereler()
             
             
     def Panel_Pencereler(self):
         if self.led_kontrol_panel_acik:
             self.led_kontrol_panel_pencere.close()
+        if self.motor_surucu_panel_acik:
+            self.motor_surucu_panel_pencere.close()
         
         
     def LedKontrolPanel(self,layout_sutun:QWidget,buton:QWidget):
         if not self.led_kontrol_panel_acik:
             self.led_kontrol_panel_pencere = Led_Kontrol_Panel(parent=self)
             self.Panel_Konumlandir(panel = self.led_kontrol_panel_pencere,satir=self.widget_satir_2d,sutun=self.widget_satir_2_sutun_1d,layout_sutun=layout_sutun,buton=buton)
-            
+        else:
+            self.led_kontrol_panel_pencere.close()
         
-
+    def MotorKontrolPanel(self,layout_sutun:QWidget,buton:QWidget):
+        if not self.motor_surucu_panel_acik:
+            self.motor_surucu_panel_pencere = I2C_MOTOR_SURUCU(parent=self)
+            self.Panel_Konumlandir(panel = self.motor_surucu_panel_pencere,satir=self.widget_satir_2d,sutun=self.widget_satir_2_sutun_2d,layout_sutun=layout_sutun,buton=buton)
+        else:
+            self.motor_surucu_panel_pencere.close()
+        
 
     def Panel_Konumlandir(self,panel:QMainWindow,satir:dict,sutun:dict,layout_sutun:QWidget,buton:QWidget):
         x,y,x_,y_ = self.geometry().getRect()

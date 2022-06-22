@@ -1,18 +1,23 @@
 #include "usart_islemler.h"
+#include "main.h"
+#include "stdio.h"
+#include "string.h"
+#include "I2C_LED.h"
+#include "I2C_MOTOR.h"
 
 /*
  * UART1'DEN GELEN KOMUTA GÖRE YAPILACAK İŞLEMLERİ BELİRLEYEN
  * VE SON KOMUTUN STRİNG DEĞERİNİ DÖNDÜREN FONKSİYON
  */
-char* Yap(char* uart1,char* son_komut)
+//char* Yap(char* uart1,char* son_komut)
+void Yap(char* uart1)
 {
 
 	char* komut = uart1[0];
 	char* islem = uart1[1];
-	char* secilen= uart1[2];
 
-	if(strcmp(uart1,son_komut)  != 0)
-	{
+	//if(strcmp(uart1,son_komut)  != 0)
+	//{
 		/*
 		 * İŞLEM GELEN VERİNİN İLK HARFİNDEN OKUNUR
 		 */
@@ -24,85 +29,28 @@ char* Yap(char* uart1,char* son_komut)
 		{
 			if(strcmp(&islem,LED_SONDUR)==0)
 			{
-				LedSondur(&secilen);
+				LedSondur(uart1);
 			}
 			else if(strcmp(&islem,LED_YAK) == 0)
 			{
-				LedYak(&secilen);
+				LedYak(uart1);
+			}
+			else if(strcmp(&islem,LED_DELAY) == 0)
+			{
+				I2C_LED_DELAY_F(uart1);
 			}
 		}
-		strcpy(son_komut,uart1);
-	}
-	else
-	{
-		Yapildi();
-	}
-
-
-	return son_komut;
+		else if(strcmp(&komut,MS_KOMUT) == 0 )
+		{
+			if(strcmp(&islem,MS_SURME)==0)
+			{
+				I2C_MOTOR_SUR(uart1);
+			}
+		}
+		else
+		{
+			Yapilamadi();
+		}
+		//strcpy(son_komut,uart1);
 }
-
-/*
- * GELEN L1 KOMUTU DURUMUNDA ÇALIŞAN FONKSİYON
- */
-void LedYak(char* secim)
-{
-	if(strcmp(secim,LED_HEPSI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_SET);
-	}
-	else if(strcmp(secim,LED_MAVI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	}
-	else if(strcmp(secim,LED_YESIL)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-	}
-	else if(strcmp(secim,LED_KIRMIZI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_SET);
-	}
-	else if(strcmp(secim,LED_SARI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_SET);
-	}
-
-	Yapildi();
-}
-
-/*
- * GELEN L0 KOMUTU DURUMUNDA ÇALIŞAN FONKSİYON
- */
-void LedSondur(char* secim)
-{
-	if(strcmp(secim,LED_HEPSI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-	}
-	else if(strcmp(secim,LED_MAVI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	}
-	else if(strcmp(secim,LED_YESIL)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	}
-	else if(strcmp(secim,LED_KIRMIZI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED3_Pin, GPIO_PIN_RESET);
-	}
-	else if(strcmp(secim,LED_SARI)==0)
-	{
-		HAL_GPIO_WritePin(GPIOA, LED4_Pin, GPIO_PIN_RESET);
-	}
-	Yapildi();
-}
-
 

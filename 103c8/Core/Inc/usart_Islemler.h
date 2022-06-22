@@ -1,20 +1,37 @@
 #ifndef __USARTISLEMLERH__
 #define __USARTISLEMLERH__
 
-#include "main.h"
-#include "stdio.h"
-#include "string.h"
-#include "LEDDEF.h"
 
-#define BAGLANTI "BGL"
+/*
+ * KOMUT
+ */
+#define LED_KOMUT "L"
 
-#define UART1_RECIEVE_ADET 3
+#define MS_KOMUT "M"
+
+
+/*
+ * İŞLEM
+ */
+#define LED_YAK "Y"
+#define LED_SONDUR "S"
+#define LED_DELAY "D"
+
+#define MS_SURME "S"
+
+
+
+
+
+#define BAGLANTI "BGL000"
+
+#define UART1_RECIEVE_ADET 6
 #define UART1_TRANSMIT_ADET 1
 #define UART1_TRANSMIT_ONAY "1"
+#define UART1_RESET_TIME 2000
 
 
-char* Yap(char* uart1,char* son_komut);
-void LedYak(char* secim);
-void LedSondur(char* secim);
+void Yap(char* uart1);
+
 
 #endif

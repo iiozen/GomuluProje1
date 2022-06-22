@@ -12,9 +12,11 @@ class FrameOlustur(QFrame):
         
         if konum!=None:
             self.setGeometry(konum)
-        stil = Stil(id=id,stiller=stiller)
-        
-        self.setStyleSheet(stil)
-        
+        if stiller!=None:
+                
+            stil = Stil(id=id,stiller=stiller)
+            
+            self.setStyleSheet(stil)
+            
         
         

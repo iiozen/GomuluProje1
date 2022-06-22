@@ -18,18 +18,37 @@ HABERLESD = {
 }
 
 KOMUTLARD = {
-    "BAGLANTI":"BGL",
+    "BAGLANTI":"BGL000",
     "LED":{
         "ISLEM":{
             "LD_SONDUR":"LS",
-            "LD_YAK":"LY"
+            "LD_YAK":"LY",
+            "LD_DELAY":"LD"
         },
         "SECIM":{
-            "LD_HEPSI":"0",
-            "LD_MAVI":"1",
-            "LD_YESIL":"2",
-            "LD_KIRMIZI":"3",
-            "LD_SARI":"4"
+            "L1":"0100",
+            "L2":"0200",
+            "L3":"0300",
+            "L4":"0400",
+            "L5":"0500",
+            "L6":"0600",
+            "L7":"0700",
+            "L8":"0800",
+            "L9":"0900",
+            "L10":"1000",
+            "L11":"1100",
+            "L12":"1200",
+            "L13":"1300",
+            "L14":"1400",
+            "L15":"1500",
+            "L16":"1600",
+            "HEPSI":"0000",
+            "SIRALI":"2200"
+        }
+    },
+    "MOTOR":{
+        "ISLEM":{
+            "SUR":"MS"
         }
     }
 }
@@ -52,7 +71,8 @@ GUI_LABELD = {
 }
 
 PENCERE_ADLARID={
-    "led_kontrol_panel":"LED KONTROL PANELİ"
+    "led_kontrol_panel":"LED KONTROL PANELİ",
+    "motor_kontrol_panel":"MOTOR SÜRME PANELİ"
 }
 
 QFRAMELERD = {
@@ -86,12 +106,12 @@ QFRAMELERD = {
         "widget_sutun":{
                 "widget_sutun_1":{
                     "id":"widget_satir_2_sutun_1",
-                    "konum":QRect(0,0,480,100),
+                    "konum":QRect(0,0,400,100),
                     "stiller":["border:3px solid white"]
                 },
                 "widget_sutun_2":{
                     "id":"widget_satir_2_sutun_2",
-                    "konum":QRect(480,0,480,100),
+                    "konum":QRect(560,0,400,100),
                     "stiller":["border:3px solid white"]
                 }
             }
@@ -186,6 +206,17 @@ layout_satir_2_sutun_1d={
             }
           }
 }
+layout_satir_2_sutun_2d={
+      "layout_1_widgetlar":
+          {
+        "widget_1":
+            {
+            "label":"  MOTOR KONTROL PANELİ  ",
+            "stiller":["font-size:12pt","font-weight:normal"],
+            "hiza":None,
+            }
+          }
+}
 
 QLAYOUTLARD = {
     "layout_satir_1d":{
@@ -195,7 +226,7 @@ QLAYOUTLARD = {
     },
     "layout_satir_2d":{
         "layout_sutun_1d":layout_satir_2_sutun_1d,
-        # "layout_sutun_2d":layout_satir_2_sutun_2d,
+        "layout_sutun_2d":layout_satir_2_sutun_2d,
     }
 }
 
