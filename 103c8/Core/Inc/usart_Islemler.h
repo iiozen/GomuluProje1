@@ -9,6 +9,7 @@
 
 #define MS_KOMUT "M"
 
+#define SCKLK_KMT "S"
 
 /*
  * İŞLEM
@@ -19,6 +20,7 @@
 
 #define MS_SURME "S"
 
+#define SCKLK_OKU "O"
 
 
 

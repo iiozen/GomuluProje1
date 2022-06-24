@@ -9,6 +9,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, QTimer,QRect
 from led_kontrol_panel import Led_Kontrol_Panel
 from i2c_motor_surucu import I2C_MOTOR_SURUCU
+from spi_nemsicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
+
 from stil import Stil
 
 from uart import UART, Komut
@@ -34,6 +36,8 @@ class AnaPencere(QMainWindow):
         self.widget_satird = QFRAMELERD["widget_satir"]
         self.widget_satir_1d = self.widget_satird["widget_satir_1"]
         self.widget_satir_2d = self.widget_satird["widget_satir_2"]
+        self.widget_satir_3d = self.widget_satird["widget_satir_3"]
+        
         # QFRAME SÜTUN DEĞİŞKENLERİ   
         self.widget_satir_1_sutund = self.widget_satir_1d["widget_sutun"]
         self.widget_satir_1_sutun_1d = self.widget_satir_1_sutund["widget_sutun_1"]
@@ -43,6 +47,13 @@ class AnaPencere(QMainWindow):
         self.widget_satir_2_sutund = self.widget_satir_2d["widget_sutun"]
         self.widget_satir_2_sutun_1d = self.widget_satir_2_sutund["widget_sutun_1"]
         self.widget_satir_2_sutun_2d = self.widget_satir_2_sutund["widget_sutun_2"]
+        
+        self.widget_satir_3_sutund = self.widget_satir_3d["widget_sutun"]
+        self.widget_satir_3_sutun_1d = self.widget_satir_3_sutund["widget_sutun_1"]
+        self.widget_satir_3_sutun_2d = self.widget_satir_3_sutund["widget_sutun_2"]
+        
+        
+        
         ## QFRAME SATIR 1
         widget_satir_1 = FrameOlustur(parent=ustwidget,widget_d=self.widget_satir_1d)
               
@@ -105,19 +116,48 @@ class AnaPencere(QMainWindow):
         widget_i2c_motor_surucu.setLayout(layout_satir_2_sutun_2)
         self.Ortala(eleman=widget_i2c_motor_surucu,layout=layout_satir_2_sutun_2)
         
-        # Ana Widget Ayarları
-        self.setCentralWidget(ustwidget)
-        self.setGeometry(500,300,960,540)
-        self.setWindowTitle("Gömülü yazılım")
 
+
+
+        ## QFRAME SATIR 3
+        widget_satir_3 = FrameOlustur(parent=ustwidget,widget_d=self.widget_satir_3d)
+
+        # SATIR 3 ORTAK BAŞLIK OLUŞTURMA
+        self.SatirBaslikOlustur(widget_satir_3,"SPI")
+        
+        # QFRAME SATIR 3 SÜTUN 1 
+        widget_satir_3_sutun_1 = FrameOlustur(parent=widget_satir_3,widget_d=self.widget_satir_3_sutun_1d)
+        
+        #   SATIR 3 SÜTUN 1
+        widget_sicaklik_kontrol_paneli = QWidget(parent=widget_satir_3_sutun_1)
+        layout_satir_3_sutun_1 = QGridLayout()
+        self.Satir3_Sutun1(layout_sutun=layout_satir_3_sutun_1)
+        widget_sicaklik_kontrol_paneli.setLayout(layout_satir_3_sutun_1)
+        self.Ortala(eleman=widget_sicaklik_kontrol_paneli,layout=layout_satir_3_sutun_1)
+
+
+
+
+
+
+
+
+        # QFRAME SATIR 3 SÜTUN 2
+        widget_satir_3_sutun_2 = FrameOlustur(parent=widget_satir_3,widget_d=self.widget_satir_3_sutun_2d)
 
         
 
 
 
-        ## Buton Sınıfından Çekilerek Yapılacak
 
-        # BAŞLANGIÇ DEĞERİ
+       
+        # Ana Widget Ayarları
+        self.setCentralWidget(ustwidget)
+        self.setGeometry(500,300,960,540)
+        self.setWindowTitle("Gömülü yazılım")
+        
+        
+        
         
 
     def SatirBaslikOlustur(self,parent:QWidget,text:str):
@@ -133,7 +173,7 @@ class AnaPencere(QMainWindow):
         self.baglanti_buton_basildi=False
         self.led_kontrol_panel_acik = False
         self.motor_surucu_panel_acik = False
-        
+        self.sicaklik_kontrol_panel_acik = False
 
 
     def KomutGonder(self,komut:str):
@@ -148,8 +188,6 @@ class AnaPencere(QMainWindow):
     def Led_Secim(self,secim:str):
         self.led_secim = secim
 
-    def IslemPencere(self):
-        pass
     
     def Ortala(self,eleman:QWidget,layout:QLayout):
         parent =eleman.parentWidget()
@@ -292,7 +330,24 @@ class AnaPencere(QMainWindow):
         
         
         
+    def Satir3_Sutun1(self,layout_sutun:QWidget):
+        layout_sutun=layout_sutun
         
+        #   SATIR 3 SÜTUN 1 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_3d"]["layout_sutun_1d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        
+        layout_1_widget_1d= layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d=layout_1_widget_1d)
+        self.sicaklik_kontrol_panel = QPushButton(text)
+        self.sicaklik_kontrol_panel.setStyleSheet(stil)
+        self.sicaklik_kontrol_panel.setCheckable(False)
+        self.sicaklik_kontrol_panel.setDisabled(True)
+        self.sicaklik_kontrol_panel.clicked.connect(lambda x:self.SicaklikKontrolPanel(
+            layout_sutun=layout_sutun,
+            buton = self.sicaklik_kontrol_panel
+            ))
+        layout_sutun.addWidget(self.sicaklik_kontrol_panel) 
         
         
         
@@ -308,10 +363,12 @@ class AnaPencere(QMainWindow):
         if aktif:
             self.led_kontrol_panel.setEnabled(True)
             self.motor_surucu_panel.setEnabled(True)
+            self.sicaklik_kontrol_panel.setEnabled(True)
             
         else:
             self.led_kontrol_panel.setEnabled(False)
             self.motor_surucu_panel.setEnabled(False)
+            self.sicaklik_kontrol_panel.setEnabled(False)
             self.Panel_Pencereler()
             
             
@@ -320,6 +377,10 @@ class AnaPencere(QMainWindow):
             self.led_kontrol_panel_pencere.close()
         if self.motor_surucu_panel_acik:
             self.motor_surucu_panel_pencere.close()
+        if self.sicaklik_kontrol_panel_acik:
+            self.sicaklik_kontrol_panel_pencere.close()
+            
+        
         
         
     def LedKontrolPanel(self,layout_sutun:QWidget,buton:QWidget):
@@ -335,6 +396,19 @@ class AnaPencere(QMainWindow):
             self.Panel_Konumlandir(panel = self.motor_surucu_panel_pencere,satir=self.widget_satir_2d,sutun=self.widget_satir_2_sutun_2d,layout_sutun=layout_sutun,buton=buton)
         else:
             self.motor_surucu_panel_pencere.close()
+            
+                 
+        
+    def SicaklikKontrolPanel(self,layout_sutun:QWidget,buton:QWidget):
+        if not self.sicaklik_kontrol_panel_acik:
+            self.sicaklik_kontrol_panel_pencere = SPI_SICAKLIK_KONTROL_PANEL(parent=self)
+            self.Panel_Konumlandir(panel = self.sicaklik_kontrol_panel_pencere,
+                                   satir=self.widget_satir_3d,
+                                   sutun=self.widget_satir_3_sutun_1d,
+                                   layout_sutun=layout_sutun,
+                                   buton=buton)
+        else:
+            self.sicaklik_kontrol_panel_pencere.close()
         
 
     def Panel_Konumlandir(self,panel:QMainWindow,satir:dict,sutun:dict,layout_sutun:QWidget,buton:QWidget):

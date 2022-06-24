@@ -265,7 +265,7 @@ void I2C_LED_DELAY_F(char* uart1)
 	char* k4 = uart1[3];
 	char* k5 = uart1[4];
 	char* k6 = uart1[5];
-	char* secim = "";
+	uint8_t* secim[4];
 	if(strcmp(k3,"0")==0)
 	{
 		sprintf(secim,"%c%c%c",k4,k5,k6);

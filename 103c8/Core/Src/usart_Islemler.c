@@ -4,7 +4,7 @@
 #include "string.h"
 #include "I2C_LED.h"
 #include "I2C_MOTOR.h"
-
+#include "SPI_SICAKLIK.h"
 /*
  * UART1'DEN GELEN KOMUTA GÖRE YAPILACAK İŞLEMLERİ BELİRLEYEN
  * VE SON KOMUTUN STRİNG DEĞERİNİ DÖNDÜREN FONKSİYON
@@ -45,6 +45,13 @@ void Yap(char* uart1)
 			if(strcmp(&islem,MS_SURME)==0)
 			{
 				I2C_MOTOR_SUR(uart1);
+			}
+		}
+		else if(strcmp(&komut,SCKLK_KMT) == 0 )
+		{
+			if(strcmp(&islem,SCKLK_OKU)==0)
+			{
+				SPI_SICAKLIK_ISLEMLER();
 			}
 		}
 		else

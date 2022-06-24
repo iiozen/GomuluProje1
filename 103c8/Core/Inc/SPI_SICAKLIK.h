@@ -1,0 +1,21 @@
+#ifndef __I2C_SICAKLIK_DEF__
+#define __I2C_SICAKLIK_DEF__
+
+
+
+#define TC72_WRITE_ADRES 0x80
+#define TC72_READ 0x02
+#define TC72_READ_ADRES 0x00
+#define TC72_CONTINOUS_MODE 0x04
+#define TC72_SHUTDOWN 0x05
+#define TC72_ONESHOT 0x15
+#define TC72_OKUMA_ADET 3
+
+
+void SPI_SICAKLIK_ISLEMLER(void);
+void SPI_SICAKLIK_BASLAT(void);
+
+
+
+
+#endif

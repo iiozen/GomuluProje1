@@ -50,7 +50,14 @@ KOMUTLARD = {
         "ISLEM":{
             "SUR":"MS"
         }
-    }
+    },
+    "SICAKLIK":
+        {
+            "ISLEM":
+                {
+                    "OKU":"SO"
+                }
+        }
 }
 
 
@@ -72,7 +79,8 @@ GUI_LABELD = {
 
 PENCERE_ADLARID={
     "led_kontrol_panel":"LED KONTROL PANELİ",
-    "motor_kontrol_panel":"MOTOR SÜRME PANELİ"
+    "motor_kontrol_panel":"MOTOR SÜRME PANELİ",
+    "sicaklik_kontrol_panel":"SICAKLIK KONTROL PANELİ"
 }
 
 QFRAMELERD = {
@@ -115,7 +123,24 @@ QFRAMELERD = {
                     "stiller":["border:3px solid white"]
                 }
             }
-        }
+        },
+        "widget_satir_3":{
+        "id":"widget_satir_3",
+        "konum":QRect(0,240,960,100),
+        "stiller":["border:3px solid white"],
+        "widget_sutun":{
+                "widget_sutun_1":{
+                    "id":"widget_satir_3_sutun_1",
+                    "konum":QRect(0,0,400,100),
+                    "stiller":["border:3px solid white"]
+                },
+                "widget_sutun_2":{
+                    "id":"widget_satir_3_sutun_2",
+                    "konum":QRect(560,0,400,100),
+                    "stiller":["border:3px solid white"]
+                }
+            }
+        }, 
 
     }
 }
@@ -218,6 +243,17 @@ layout_satir_2_sutun_2d={
           }
 }
 
+layout_satir_3_sutun_1d={
+      "layout_1_widgetlar":
+          {
+        "widget_1":
+            {
+            "label":"  SICAKLIK KONTROL PANELİ  ",
+            "stiller":["font-size:12pt","font-weight:normal"],
+            "hiza":None,
+            }
+          }
+}
 QLAYOUTLARD = {
     "layout_satir_1d":{
         "layout_sutun_1d":layout_satir_1_sutun_1d,
@@ -227,6 +263,10 @@ QLAYOUTLARD = {
     "layout_satir_2d":{
         "layout_sutun_1d":layout_satir_2_sutun_1d,
         "layout_sutun_2d":layout_satir_2_sutun_2d,
+    },
+    "layout_satir_3d":{
+        "layout_sutun_1d":layout_satir_3_sutun_1d,
+        # "layout_sutun_2d":layout_satir_3_sutun_2d,
     }
 }
 
@@ -235,8 +275,8 @@ DEGISENLABELD={
         {
             "BAGLANTI":
                 {
-                    "BASARILI":"DURDUR",
-                    "BASARISIZ":"DURDUR"
+                    "BASARILI":"BAĞLANTIYI KES",
+                    "BASARISIZ":"ARAMAYI DURDUR"
                 }
         },
     "LABEL":

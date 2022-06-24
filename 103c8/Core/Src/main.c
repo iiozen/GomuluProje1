@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -29,6 +30,7 @@
 #include "string.h"
 #include "usart_islemler.h"
 #include "I2C_LED.h"
+
 
 char* UART1_RECIEVE[UART1_RECIEVE_ADET];
 char* UART1_TRANSMIT[UART1_TRANSMIT_ADET];
@@ -103,15 +105,18 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   MX_TIM2_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
 
 
   HAL_TIM_Base_Start_IT(&htim2);
+  /* BA�?LANGIÇ SICAKLIK SENSÖRÜNÜ BA�?LATIYORUM  */
+  //SPI_SICAKLIK_BASLAT();
   /* BASLANGIÇ İÇİN TÜM LEDLERİ SÖNDÜRÜYORUM */
   I2C_LED_SONDUR(0xFFFF);
 
-  /* BA�?LANGIÇ İÇİN MOTORUN HIZINI 0LIYORUM */
+  /* BA�?LANGIÇ İÇİN MOTORUN HIZINI 0LIYORUM */
   I2C_MOTOR(0);
 
   /* USER CODE END 2 */
