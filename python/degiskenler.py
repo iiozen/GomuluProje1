@@ -5,7 +5,7 @@ UARTD={
     "UART":{
         "PORT":"COM2",
         "BAUDRATE": "115200",
-        "TIMEOUT":"0.1"
+        "TIMEOUT":"3"
     }
 }
 

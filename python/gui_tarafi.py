@@ -177,11 +177,9 @@ class AnaPencere(QMainWindow):
 
 
     def KomutGonder(self,komut:str):
-        self.KomutVar(True)
         basari = self.komut.Haberles(komut= komut)
         if not basari:
             self.Baglanti()
-        self.KomutVar(False)
         
 
 
@@ -441,13 +439,13 @@ class AnaPencere(QMainWindow):
     def BaglantiButonConnect(self):
         if self.baglanti_buton_basildi:
             self.BaglantiDurdur()
+
         else:
             self.Baglanti()
         self.baglanti_buton_basildi = not self.baglanti_buton_basildi
         
         
     def Baglanti(self):
-        self.KomutVar(True)
         if not self.ilkbaglanti:
             if self.uart.is_open:
                 self.uart.close()
@@ -458,8 +456,10 @@ class AnaPencere(QMainWindow):
             self.komut = Komut(uart= self.uart,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
             basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
             if basari:
+                self.StartStopTimer(False)
                 self.Basari(buton=buton,label=label)
             else:
+                self.StartStopTimer(True)
                 self.Basarisiz(buton=buton,label=label)
         else:
             self.Basarisiz(buton=buton,label=label)
@@ -468,7 +468,6 @@ class AnaPencere(QMainWindow):
         
         self.ilkbaglanti=False
         self.LineEditYazilabilirlik(False)
-        self.KomutVar(False)
         
         
     def StartStopTimer(self,start:bool):
@@ -505,7 +504,7 @@ class AnaPencere(QMainWindow):
         
     def BaglantiDurdur(self):
         self.Panel_Butonlar(False)
-        
+        self.StartStopTimer(False)
         self.timer.stop()
         if not self.ilkbaglanti:
             if self.uart.is_open:
@@ -523,12 +522,7 @@ class AnaPencere(QMainWindow):
         self.baglanti_durumu.setStyleSheet(stil)
         
         self.LineEditYazilabilirlik(True)
-        
-    def KomutVar(self,islemdemi:bool):
-        if islemdemi:
-            self.StartStopTimer(False)           
-        else:
-            self.StartStopTimer(True)
+
             
     def LineEditYazilabilirlik(self,olsun:bool):
         if olsun:

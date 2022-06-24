@@ -42,14 +42,11 @@ class Komut():
     def Haberles(self,komut:str):
         yazi = self.GonderimHazirla(komut= komut)
         okuma = 0
-        baslangic = time.time()
-        while okuma!=HABERLESD["ONAY"]:
-            okuma = self.GonderveOku(yazi= yazi)
-            zaman = time.time()-baslangic
-            if (zaman>self.zamanasimi):
-                return False
+        okuma = self.GonderveOku(yazi= yazi)
         if okuma == HABERLESD["ONAY"]:
-            return True            
+            return True        
+        else:
+            return False    
     def GonderimHazirla(self,komut:str):
         yazi = "\x00".join(komut)
         return yazi
