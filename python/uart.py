@@ -1,10 +1,9 @@
 import serial
-import time
 
 from degiskenler import HABERLESD
 
 class UART():
-    def __init__(self,port:str,baudrate:int,timeout:int):
+    def __init__(self,port:str,baudrate:int,timeout:float):
         self.baglandi = False
         try:
             self.uart = serial.Serial(port=port,baudrate=baudrate,timeout=timeout)
@@ -32,6 +31,12 @@ class UART():
         
     def Oku(self,adet=1):
         return self.uart.read(adet)
+    
+    def OkuSatir(self):
+        try:
+            return self.uart.readline()
+        except:
+            return b''
 
 
 

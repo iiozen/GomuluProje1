@@ -30,12 +30,14 @@
 #include "string.h"
 #include "usart_islemler.h"
 #include "I2C_LED.h"
+#include "SPI_SICAKLIK.h"
 
 
 char* UART1_RECIEVE[UART1_RECIEVE_ADET];
 char* UART1_TRANSMIT[UART1_TRANSMIT_ADET];
 
 int tim2_sayici_led = 0;
+int tim2_sayici_sicaklik = 0;
 
 /* USER CODE END Includes */
 
@@ -65,8 +67,6 @@ void SystemClock_Config(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void Yapildi(void);
-void Yapilamadi(void);
-void Okunan(char veri,char veri2,char veri3);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -106,6 +106,7 @@ int main(void)
   MX_I2C1_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
 
@@ -177,17 +178,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	if(huart == &huart1)
 	{
 
-		Yap(UART1_RECIEVE);
+		int yapildi= Yap(UART1_RECIEVE);
 
+		if (yapildi)
+		{
+			Yapildi();
+		}
 	}
 
-}
-void HAL_UART_AbortCpltCallback(UART_HandleTypeDef *huart)
-{
-	if (huart == &huart1)
-	{
-		UartReset();
-	}
 }
 /* TİMER İNTERRUPT */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -197,6 +195,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim == &htim2)
 	{
 		tim2_sayici_led++;
+		tim2_sayici_sicaklik++;
 
 		if (I2C_LED_OTOMATIK_ARTIR)
 		  {
@@ -204,6 +203,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			  {
 				  tim2_sayici_led = 0;
 				  I2C_LED_SIRALI();
+			  }
+		  }
+		if (SPI_SICAKLIK_OKU)
+		  {
+			  if(tim2_sayici_sicaklik >= SPI_SICAKLIK_OKUMA_DELAY)
+			  {
+				  tim2_sayici_sicaklik = 0;
+				  SPI_SICAKLIK_ISLEMLER();
 			  }
 		  }
 	}
@@ -216,10 +223,7 @@ void Yapildi(void)
 	HAL_UART_Transmit(&huart1, UART1_TRANSMIT_ONAY, UART1_TRANSMIT_ADET, HAL_MAX_DELAY);
 	HAL_UART_Receive_IT(&huart1, UART1_RECIEVE, UART1_RECIEVE_ADET);
 }
-void Yapilamadi(void)
-{
-	HAL_UART_Transmit(&huart1, "0", UART1_TRANSMIT_ADET, HAL_MAX_DELAY);
-}
+
 /* USER CODE END 4 */
 
 /**

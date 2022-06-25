@@ -2,16 +2,21 @@ from PyQt6.QtCore import QRect,Qt
 
 
 UARTD={
-    "UART":{
-        "PORT":"COM2",
-        "BAUDRATE": "115200",
-        "TIMEOUT":"3"
+    "UART1":{
+    "PORT":"COM2",
+    "BAUDRATE": "115200",
+    "TIMEOUT":"3"
+    },
+    "UART2":{
+    "PORT":"COM3",
+    "BAUDRATE": "115200",
+    "TIMEOUT":"1"
     }
 }
 
 
 HABERLESD = {
-    "ZAMAN_ASIMI":0.5,
+    "ZAMAN_ASIMI":2,
     "OKUMA_ADET":1,
     "ONAY":b'1',
     "TIMER":5000
@@ -55,11 +60,25 @@ KOMUTLARD = {
         {
             "ISLEM":
                 {
-                    "OKU":"SO"
+                    "OKU":"SO",
+                    "DUR":"SD"
                 }
         }
 }
 
+SICAKLIK_STILLERID = {
+    "1":"background-color:gray;color:rgb(255,14,3)",
+    "2":"background-color:gray;color:rgb(253,79,19)",
+    "3":"background-color:gray;color:rgb(252,184,49)",
+    "4":"background-color:gray;color:rgb(254,239,85)",
+    "5":"background-color:gray;color:rgb(255,254,196)",
+    "6":"background-color:gray;color:rgb(255,255,255)",
+    "7":"background-color:gray;color:rgb(211,255,254)",
+    "8":"background-color:gray;color:rgb(163,253,254)",
+    "9":"background-color:gray;color:rgb(123,232,253)",
+    "10":"background-color:gray;color:rgb(95,205,254)",
+    "11":"background-color:gray;color:rgb(71,183,255)",
+}
 
 GUI_LABELD = {
     "LED":{
@@ -149,28 +168,45 @@ QFRAMELERD = {
 layout_satir_1_sutun_1d = {
     "layout_1_widgetlar":{
             "widget_1":{
-            "label":"UART İLETİŞİM BİLGİLERİ",
+            "label":"UART1 ve UART2 BİLGİLERİ",
             "stiller":["font-weight:bold","font-size:10pt"],
             "hiza":Qt.AlignmentFlag.AlignCenter,
                         }
                 },
     "layout_2_widgetlar":{
                 "widget_1":{
-                    "label":UARTD["UART"]["PORT"],
+                    "label":UARTD["UART1"]["PORT"],
                     "stiller":None,
                     "hiza":None,
                 },
                 "widget_2":{
-                    "label":UARTD["UART"]["BAUDRATE"],
+                    "label":UARTD["UART1"]["BAUDRATE"],
                     "stiller":None,
                     "hiza":None,
                 },
                 "widget_3":{
-                    "label":UARTD["UART"]["TIMEOUT"],
+                    "label":UARTD["UART1"]["TIMEOUT"],
                     "stiller":None,
                     "hiza":None,
                 }
             },
+        "layout_3_widgetlar":{
+                "widget_1":{
+                    "label":UARTD["UART2"]["PORT"],
+                    "stiller":None,
+                    "hiza":None,
+                },
+                "widget_2":{
+                    "label":UARTD["UART2"]["BAUDRATE"],
+                    "stiller":None,
+                    "hiza":None,
+                },
+                "widget_3":{
+                    "label":UARTD["UART2"]["TIMEOUT"],
+                    "stiller":None,
+                    "hiza":None,
+                }
+            }
 
         
 }

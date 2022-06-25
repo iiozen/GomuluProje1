@@ -3,13 +3,13 @@ from PyQt6.QtWidgets import (
                             QMainWindow, QPushButton, QVBoxLayout,
                             QWidget , QRadioButton,QFormLayout,
                             QLineEdit, QLabel, QFrame,
-                            QLayout, QGridLayout
+                            QLayout, QGridLayout, QHBoxLayout
                             )
 
 from PyQt6.QtCore import Qt, QTimer,QRect
 from led_kontrol_panel import Led_Kontrol_Panel
 from i2c_motor_surucu import I2C_MOTOR_SURUCU
-from spi_nemsicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
+from spi_sicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
 
 from stil import Stil
 
@@ -182,7 +182,6 @@ class AnaPencere(QMainWindow):
             self.Baglanti()
         
 
-
     def Led_Secim(self,secim:str):
         self.led_secim = secim
 
@@ -198,12 +197,15 @@ class AnaPencere(QMainWindow):
     def Satir1_Sutun1(self,layout_sutun):
         layout_sutun = layout_sutun
         layout_baslik = QGridLayout()
-        layout_uart = QFormLayout()
+        layout_uart1 = QFormLayout()
+        layout_uart2 = QFormLayout()
+        layout_uartlar_h = QHBoxLayout()
         
         #   SATIR 1 SÜTUN 1 WİDGET TANIMLARININ ÇAĞIRILMASI
         sutun_d = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_1d"]
         layout_1d = sutun_d["layout_1_widgetlar"]
         layout_2d = sutun_d["layout_2_widgetlar"]
+        layout_3d = sutun_d["layout_3_widgetlar"]
         
         
         layout_1_widget_1d = layout_1d["widget_1"]
@@ -215,25 +217,60 @@ class AnaPencere(QMainWindow):
 
         layout_2_widget_1d = layout_2d["widget_1"]
         text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_1d)
-        self.portinput = QLineEdit()
-        self.portinput.setText(text)
+        self.portinput1 = QLineEdit()
+        self.portinput1.setText(text)
 
         layout_2_widget_2d = layout_2d["widget_2"]
         text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_2d)
-        self.baudinput = QLineEdit()
-        self.baudinput.setText(text)
+        self.baudinput1 = QLineEdit()
+        self.baudinput1.setText(text)
         
         layout_2_widget_3d = layout_2d["widget_3"]
         text,stil,hiza = WidgetDondurur(widget_d = layout_2_widget_3d)
-        self.toinput = QLineEdit()
-        self.toinput.setText(text)
+        self.toinput1 = QLineEdit()
+        self.toinput1.setText(text)
 
-        layout_uart.addRow("Port:",self.portinput)
-        layout_uart.addRow("Baudrate: ",self.baudinput)
-        layout_uart.addRow("Timeout: ",self.toinput)
+        layout_uart1.addRow("Port:",self.portinput1)
+        layout_uart1.addRow("Baudrate: ",self.baudinput1)
+        layout_uart1.addRow("Timeout: ",self.toinput1)
+        
+        self.toinput1.setFixedWidth(75)
+        self.baudinput1.setFixedWidth(75)
+        self.portinput1.setFixedWidth(75)
+        
+        
+        
+        layout_3_widget_1d = layout_3d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_3_widget_1d)
+        self.portinput2 = QLineEdit()
+        self.portinput2.setText(text)
+
+        layout_3_widget_2d = layout_3d["widget_2"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_3_widget_2d)
+        self.baudinput2 = QLineEdit()
+        self.baudinput2.setText(text)
+        
+        layout_3_widget_3d = layout_3d["widget_3"]
+        text,stil,hiza = WidgetDondurur(widget_d = layout_3_widget_3d)
+        self.toinput2 = QLineEdit()
+        self.toinput2.setText(text)
+
+        layout_uart2.addRow("Port:",self.portinput2)
+        layout_uart2.addRow("Baudrate: ",self.baudinput2)
+        layout_uart2.addRow("Timeout: ",self.toinput2)
+        
+        self.portinput2.setFixedWidth(75)
+        self.baudinput2.setFixedWidth(75)
+        self.toinput2.setFixedWidth(75)
+        
+        layout_uartlar_h.addLayout(layout_uart1)
+        layout_uartlar_h.addLayout(layout_uart2)
+        
+        
+        
         
         layout_sutun.addLayout(layout_baslik,1,1,1,1,Qt.AlignmentFlag.AlignTop)
-        layout_sutun.addLayout(layout_uart,2,1,1,1,Qt.AlignmentFlag.AlignBottom)
+        layout_sutun.addLayout(layout_uartlar_h,2,1,1,1,Qt.AlignmentFlag.AlignBottom)
     
     
     def Satir1_Sutun2(self,layout_sutun):
@@ -447,13 +484,16 @@ class AnaPencere(QMainWindow):
         
     def Baglanti(self):
         if not self.ilkbaglanti:
-            if self.uart.is_open:
-                self.uart.close()
-        self.uart = UART(port=self.portinput.text(),baudrate=float(self.baudinput.text()),timeout=float(self.toinput.text()))
+            if self.uart1.is_open:
+                self.uart1.close()
+            if self.uart2.is_open:
+                self.uart2.close()
+        self.uart1 = UART(port=self.portinput1.text(),baudrate=float(self.baudinput1.text()),timeout=float(self.toinput1.text()))
+        self.uart2 = UART(port=self.portinput2.text(),baudrate=float(self.baudinput2.text()),timeout=float(self.toinput2.text()))
         buton = DEGISENLABELD["BUTON"]
         label = DEGISENLABELD["LABEL"]
-        if self.uart.baglandi:
-            self.komut = Komut(uart= self.uart,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
+        if self.uart1.baglandi:
+            self.komut = Komut(uart= self.uart1,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
             basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
             if basari:
                 self.StartStopTimer(False)
@@ -507,8 +547,10 @@ class AnaPencere(QMainWindow):
         self.StartStopTimer(False)
         self.timer.stop()
         if not self.ilkbaglanti:
-            if self.uart.is_open:
-                self.uart.close()
+            if self.uart1.is_open:
+                self.uart1.close()
+            if self.uart2.is_open:
+                self.uart2.close()
         buton = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_2d"]["layout_2_widgetlar"]["widget_1"]
         durum = QLAYOUTLARD["layout_satir_1d"]["layout_sutun_2d"]["layout_1_widgetlar"]["widget_1"]
         # BUTON EN BAŞTAKİ HALE GETİRİLDİ
@@ -526,16 +568,26 @@ class AnaPencere(QMainWindow):
             
     def LineEditYazilabilirlik(self,olsun:bool):
         if olsun:
-            self.portinput.setEnabled(True)
-            self.baudinput.setEnabled(True)
-            self.toinput.setEnabled(True)
+            self.portinput1.setEnabled(True)
+            self.baudinput1.setEnabled(True)
+            self.toinput1.setEnabled(True)
+            
+            self.portinput2.setEnabled(True)
+            self.baudinput2.setEnabled(True)
+            self.toinput2.setEnabled(True)
         else:
-            self.portinput.setDisabled(True)
-            self.baudinput.setDisabled(True)
-            self.toinput.setDisabled(True)
+            self.portinput1.setDisabled(True)
+            self.baudinput1.setDisabled(True)
+            self.toinput1.setDisabled(True)
+            
+            self.portinput2.setDisabled(True)
+            self.baudinput2.setDisabled(True)
+            self.toinput2.setDisabled(True)
             
             
     def closeEvent(self,event):
         if not self.ilkbaglanti:
-            if self.uart.is_open:
-                self.uart.close()
+            if self.uart1.is_open:
+                self.uart1.close()
+            if self.uart2.is_open:
+                self.uart2.close()

@@ -57,7 +57,7 @@ void I2C_MOTOR_SUR(char* uart1)
 	motor_hiz =(uint16_t)(atoi(secicim) & 0x0fff);
 
 	I2C_MOTOR(motor_hiz);
-	Yapildi();
+	//Yapildi();
 }
 
 void I2C_MOTOR(int hiz)

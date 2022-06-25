@@ -65,7 +65,6 @@ void Error_Handler(void);
 #define SPI_SICAKLIK_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 void Yapildi(void);
-void UartReset(void);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

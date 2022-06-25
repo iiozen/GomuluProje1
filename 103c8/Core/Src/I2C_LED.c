@@ -92,7 +92,7 @@ void LedYak(char* uart1)
 	{
 		I2C_LED_OTOMATIK_ARTIR_F(1);
 	}
-	Yapildi();
+	//Yapildi();
 }
 
 /*
@@ -177,7 +177,7 @@ void LedSondur(char* uart1)
 		I2C_LED_OTOMATIK_ARTIR_F(0);
 	}
 
-	Yapildi();
+	//Yapildi();
 
 }
 
@@ -275,6 +275,6 @@ void I2C_LED_DELAY_F(char* uart1)
 		sprintf(secim,"%c%c%c%c",k3,k4,k5,k6);
 	}
 	I2C_LED_DELAY_MS = atoi(secim);
-	Yapildi();
+	//Yapildi();
 
 }

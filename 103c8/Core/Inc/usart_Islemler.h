@@ -21,6 +21,7 @@
 #define MS_SURME "S"
 
 #define SCKLK_OKU "O"
+#define SCKLK_DUR "D"
 
 
 
@@ -33,7 +34,7 @@
 #define UART1_RESET_TIME 2000
 
 
-void Yap(char* uart1);
+int Yap(char* uart1);
 
 
 #endif
