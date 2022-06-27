@@ -6,11 +6,12 @@ from PyQt6.QtWidgets import (
                             QLayout, QGridLayout, QHBoxLayout
                             )
 
-from PyQt6.QtCore import Qt, QTimer,QRect
+from PyQt6.QtCore import Qt, QTimer,QRect,QThread
 from led_kontrol_panel import Led_Kontrol_Panel
 from i2c_motor_surucu import I2C_MOTOR_SURUCU
 from spi_sicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
-
+from uart1baglanti import UART1BAGLANTI
+from spi_adc import SPI_ADC_PANEL
 from stil import Stil
 
 from uart import UART, Komut
@@ -18,7 +19,7 @@ from uart import UART, Komut
 from qframe import FrameOlustur
 # from widget import WidgetOlusturucu
 
-from degiskenler import DEGISENLABELD, HABERLESD, KOMUTLARD, QFRAMELERD, QLAYOUTLARD
+from degiskenler import DEGISENLABELD, HABERLESD, QFRAMELERD, QLAYOUTLARD
 from widget import WidgetDondurur
 
 class AnaPencere(QMainWindow):
@@ -146,7 +147,12 @@ class AnaPencere(QMainWindow):
         widget_satir_3_sutun_2 = FrameOlustur(parent=widget_satir_3,widget_d=self.widget_satir_3_sutun_2d)
 
         
-
+        #   SATIR 3 SÜTUN 2
+        widget_adc_paneli = QWidget(parent=widget_satir_3_sutun_2)
+        layout_satir_3_sutun_2 = QGridLayout()
+        self.Satir3_Sutun2(layout_sutun=layout_satir_3_sutun_2)
+        widget_adc_paneli.setLayout(layout_satir_3_sutun_2)
+        self.Ortala(eleman=widget_adc_paneli,layout=layout_satir_3_sutun_2)
 
 
 
@@ -174,6 +180,7 @@ class AnaPencere(QMainWindow):
         self.led_kontrol_panel_acik = False
         self.motor_surucu_panel_acik = False
         self.sicaklik_kontrol_panel_acik = False
+        self.adc_panel_acik = False
 
 
     def KomutGonder(self,komut:str):
@@ -385,6 +392,26 @@ class AnaPencere(QMainWindow):
         layout_sutun.addWidget(self.sicaklik_kontrol_panel) 
         
         
+                
+    def Satir3_Sutun2(self,layout_sutun:QWidget):
+        layout_sutun=layout_sutun
+        
+        #   SATIR 3 SÜTUN 1 WİDGET TANIMLARININ ÇAĞIRILMASI
+        sutun_d = QLAYOUTLARD["layout_satir_3d"]["layout_sutun_2d"]
+        layout_1d = sutun_d["layout_1_widgetlar"]
+        
+        layout_1_widget_1d= layout_1d["widget_1"]
+        text,stil,hiza = WidgetDondurur(widget_d=layout_1_widget_1d)
+        self.adc_panel = QPushButton(text)
+        self.adc_panel.setStyleSheet(stil)
+        self.adc_panel.setCheckable(False)
+        self.adc_panel.setDisabled(True)
+        self.adc_panel.clicked.connect(lambda x:self.ADCPanel(
+            layout_sutun=layout_sutun,
+            buton = self.adc_panel
+            ))
+        layout_sutun.addWidget(self.adc_panel) 
+        
         
 
         
@@ -399,11 +426,13 @@ class AnaPencere(QMainWindow):
             self.led_kontrol_panel.setEnabled(True)
             self.motor_surucu_panel.setEnabled(True)
             self.sicaklik_kontrol_panel.setEnabled(True)
+            self.adc_panel.setEnabled(True)
             
         else:
             self.led_kontrol_panel.setEnabled(False)
             self.motor_surucu_panel.setEnabled(False)
             self.sicaklik_kontrol_panel.setEnabled(False)
+            self.adc_panel.setEnabled(False)
             self.Panel_Pencereler()
             
             
@@ -414,6 +443,8 @@ class AnaPencere(QMainWindow):
             self.motor_surucu_panel_pencere.close()
         if self.sicaklik_kontrol_panel_acik:
             self.sicaklik_kontrol_panel_pencere.close()
+        if self.adc_panel_acik:
+            self.adc_panel_pencere.close()
             
         
         
@@ -445,6 +476,17 @@ class AnaPencere(QMainWindow):
         else:
             self.sicaklik_kontrol_panel_pencere.close()
         
+        
+    def ADCPanel(self,layout_sutun:QWidget,buton:QWidget):
+        if not self.adc_panel_acik:
+            self.adc_panel_pencere = SPI_ADC_PANEL(parent=self)
+            self.Panel_Konumlandir(panel = self.adc_panel_pencere,
+                                   satir=self.widget_satir_3d,
+                                   sutun=self.widget_satir_3_sutun_2d,
+                                   layout_sutun=layout_sutun,
+                                   buton=buton)
+        else:
+            self.adc_panel_pencere.close()
 
     def Panel_Konumlandir(self,panel:QMainWindow,satir:dict,sutun:dict,layout_sutun:QWidget,buton:QWidget):
         x,y,x_,y_ = self.geometry().getRect()
@@ -491,16 +533,21 @@ class AnaPencere(QMainWindow):
         self.uart1 = UART(port=self.portinput1.text(),baudrate=float(self.baudinput1.text()),timeout=float(self.toinput1.text()))
         self.uart2 = UART(port=self.portinput2.text(),baudrate=float(self.baudinput2.text()),timeout=float(self.toinput2.text()))
         buton = DEGISENLABELD["BUTON"]
-        label = DEGISENLABELD["LABEL"]
+        label = DEGISENLABELD["LABEL"]  
         if self.uart1.baglandi:
             self.komut = Komut(uart= self.uart1,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
-            basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
-            if basari:
-                self.StartStopTimer(False)
-                self.Basari(buton=buton,label=label)
-            else:
-                self.StartStopTimer(True)
-                self.Basarisiz(buton=buton,label=label)
+            self.baglanti_thread = QThread()
+            self.baglanti_arar = UART1BAGLANTI(komut=self.komut)
+            self.baglanti_arar.moveToThread(self.baglanti_thread)
+            self.baglanti_thread.started.connect(self.baglanti_arar.run)
+            self.baglanti_arar.finished.connect(lambda cevap:self.BasariDurum(basari=cevap))
+            self.baglanti_arar.finished.connect(self.baglanti_thread.quit)
+            self.baglanti_arar.finished.connect(self.baglanti_arar.deleteLater)
+            self.baglanti_thread.finished.connect(self.baglanti_thread.deleteLater)
+            self.baglanti_thread.start()
+            # basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
+
+
         else:
             self.Basarisiz(buton=buton,label=label)
 
@@ -508,6 +555,18 @@ class AnaPencere(QMainWindow):
         
         self.ilkbaglanti=False
         self.LineEditYazilabilirlik(False)
+
+            
+    def BasariDurum(self,basari:bool):
+        buton = DEGISENLABELD["BUTON"]
+        label = DEGISENLABELD["LABEL"]  
+  
+        if basari:
+            self.StartStopTimer(False)
+            self.Basari(buton=buton,label=label)
+        else:
+            self.StartStopTimer(True)
+            self.Basarisiz(buton=buton,label=label)
         
         
     def StartStopTimer(self,start:bool):
@@ -532,7 +591,6 @@ class AnaPencere(QMainWindow):
         
     def Basarisiz(self,buton:dict,label:dict):
         self.Panel_Butonlar(False)
-        
         basarisiz_buton_text = buton["BAGLANTI"]["BASARISIZ"]
         basarisiz_baglanti_durumu = label["BAGLANTI"]["BASARISIZ"]
         basarisiz_baglanti_durumu_text = basarisiz_baglanti_durumu["TEXT"]

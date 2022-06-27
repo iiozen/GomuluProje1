@@ -44,10 +44,10 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, I2C_LED_Pin|I2C_MOTOR_Pin|SPI_SICAKLIK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, I2C_LED_Pin|I2C_MOTOR_Pin|SPI_SICAKLIK_Pin|SPI_ADC_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = I2C_LED_Pin|I2C_MOTOR_Pin|SPI_SICAKLIK_Pin;
+  /*Configure GPIO pins : PBPin PBPin PBPin PBPin */
+  GPIO_InitStruct.Pin = I2C_LED_Pin|I2C_MOTOR_Pin|SPI_SICAKLIK_Pin|SPI_ADC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

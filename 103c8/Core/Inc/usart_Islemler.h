@@ -11,6 +11,8 @@
 
 #define SCKLK_KMT "S"
 
+#define ADC_KMT "A"
+
 /*
  * İŞLEM
  */
@@ -23,6 +25,8 @@
 #define SCKLK_OKU "O"
 #define SCKLK_DUR "D"
 
+#define ADC_OKU "O"
+#define ADC_DUR "D"
 
 
 

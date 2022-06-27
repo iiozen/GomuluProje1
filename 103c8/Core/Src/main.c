@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
 #include "i2c.h"
 #include "spi.h"
@@ -31,14 +32,16 @@
 #include "usart_islemler.h"
 #include "I2C_LED.h"
 #include "SPI_SICAKLIK.h"
-
+#include "SPI_ADC.h"
 
 char* UART1_RECIEVE[UART1_RECIEVE_ADET];
 char* UART1_TRANSMIT[UART1_TRANSMIT_ADET];
+char* sicaklik_adc[50];
+int uzunlukverisi;
 
 int tim2_sayici_led = 0;
 int tim2_sayici_sicaklik = 0;
-
+int tim2_sayici_adc = 0;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -120,6 +123,9 @@ int main(void)
   /* BA�?LANGIÇ İÇİN MOTORUN HIZINI 0LIYORUM */
   I2C_MOTOR(0);
 
+  /* BAŞLANGIÇ İLETİŞİM ÇIKIŞLARINI AYARLIYORUM */
+	HAL_GPIO_WritePin(GPIOB, SPI_SICAKLIK_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, SPI_ADC_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -196,6 +202,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		tim2_sayici_led++;
 		tim2_sayici_sicaklik++;
+		tim2_sayici_adc++;
 
 		if (I2C_LED_OTOMATIK_ARTIR)
 		  {
@@ -205,6 +212,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				  I2C_LED_SIRALI();
 			  }
 		  }
+
 		if (SPI_SICAKLIK_OKU)
 		  {
 			  if(tim2_sayici_sicaklik >= SPI_SICAKLIK_OKUMA_DELAY)
@@ -213,6 +221,59 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				  SPI_SICAKLIK_ISLEMLER();
 			  }
 		  }
+		if (SPI_ADC_OKU)
+		  {
+			  if(tim2_sayici_adc >= SPI_ADC_OKUMA_DELAY)
+			  {
+				  tim2_sayici_adc = 0;
+				  SPI_ADC_ISLEMLER();
+			  }
+		  }
+
+
+
+
+		/*
+		  if(tim2_sayici_adc >= SPI_ADC_OKUMA_DELAY)
+		  {
+			  tim2_sayici_adc = 0;
+		if (SPI_SICAKLIK_OKU)
+		  {
+
+				  tim2_sayici_sicaklik = 0;
+				  tim2_sayici_adc = 0;
+				  SPI_SICAKLIK_ISLEMLER();
+
+			sprintf(sicaklik_adc,"SO%.4f",sicaklik);
+
+		  }
+		else
+		{
+			strcpy(sicaklik_adc,"SONone");
+
+		}
+		if (SPI_ADC_OKU)
+		  {
+
+				  SPI_ADC_ISLEMLER();
+
+				  uzunlukverisi=sprintf(sicaklik_adc,"%s;AO%.3f\n",sicaklik_adc,adc_deger);
+
+		  }
+		else
+		{
+			uzunlukverisi=sprintf(sicaklik_adc,"%s;AO%s\n\r",sicaklik_adc,"None");
+		}
+		if (SPI_SICAKLIK_OKU | SPI_ADC_OKU)
+		{
+			HAL_UART_Transmit(&huart3, sicaklik_adc, uzunlukverisi, HAL_MAX_DELAY);
+		}
+		  }
+		  */
+
+
+
+
 	}
 
 }

@@ -7,8 +7,10 @@
 #define TC72_READ_ADRES 0x00
 #define TC72_OKUMA_ADET 2
 
-#define SPI_SICAKLIK_OKUMA_DELAY 100
+#define SPI_SICAKLIK_OKUMA_DELAY 300
 
+
+//extern float sicaklik;
 
 extern int SPI_SICAKLIK_OKU;
 

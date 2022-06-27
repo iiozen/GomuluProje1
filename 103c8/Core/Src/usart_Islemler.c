@@ -1,3 +1,4 @@
+#include "SPI_ADC.h"
 #include "usart_islemler.h"
 #include "main.h"
 #include "stdio.h"
@@ -62,6 +63,19 @@ int Yap(char* uart1)
 			else if(strcmp(&islem,SCKLK_DUR)==0)
 			{
 				SPI_SICAKLIK_BASLAT(0);
+				donus = 1;
+			}
+		}
+		else if(strcmp(&komut,ADC_KMT) == 0 )
+		{
+			if(strcmp(&islem,ADC_OKU)==0)
+			{
+				SPI_ADC_BASLAT(1);
+				donus = 1;
+			}
+			else if(strcmp(&islem,ADC_DUR)==0)
+			{
+				SPI_ADC_BASLAT(0);
 				donus = 1;
 			}
 		}

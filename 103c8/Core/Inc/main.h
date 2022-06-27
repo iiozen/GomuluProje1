@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define I2C_MOTOR_GPIO_Port GPIOB
 #define SPI_SICAKLIK_Pin GPIO_PIN_2
 #define SPI_SICAKLIK_GPIO_Port GPIOB
+#define SPI_ADC_Pin GPIO_PIN_3
+#define SPI_ADC_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 void Yapildi(void);
 /* USER CODE END Private defines */

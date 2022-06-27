@@ -26,11 +26,17 @@ class UART():
     def Yaz(self,yazi:str):
         
         yazi = bytes(yazi,"utf-8")
-        self.uart.write(yazi)
-        
+        try:
+            self.uart.write(yazi)
+        except:
+            pass
         
     def Oku(self,adet=1):
-        return self.uart.read(adet)
+        try:
+            return self.uart.read(adet)
+        except:
+            return b''
+            
     
     def OkuSatir(self):
         try:

@@ -1,4 +1,4 @@
-from PyQt6.QtCore import QObject, QThread, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 from uart import UART
 class UART3DEGEROKU(QObject):
     progress = pyqtSignal(bytes)
