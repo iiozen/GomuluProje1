@@ -9,14 +9,15 @@ class SinyalSinif2(QObject):
 
 
 class UART1BAGLANTI(QRunnable):
-    def __init__(self,komut:Komut):
+    def __init__(self,komut:Komut,komutcu=KOMUTLARD["BAGLANTI"]):
         super().__init__()
         self.komut = komut
-        
+        self.komutcu = komutcu
         self.signals = SinyalSinif2()
         
         
     @pyqtSlot()
     def run(self):
-        cevap = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
+        cevap = self.komut.Haberles(self.komutcu)
         self.signals.finished.emit(cevap)
+        print("bağlantı deniyorum")

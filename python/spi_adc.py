@@ -3,7 +3,6 @@ from PyQt6.QtWidgets import (
     QHBoxLayout, QLabel,
                             )
 from degiskenler import  KOMUTLARD,PENCERE_ADLARID
-from uart2veriokuma import UART3DEGEROKU
 
 import matplotlib
 matplotlib.use('Qt5Agg')
@@ -43,7 +42,7 @@ class SPI_ADC_PANEL(QMainWindow):
         adc_oku = self.adc_oku
         
         komut = "1111"
-        self.Uart2OkumaIslemci(True)
+        self.Uart2OkumaIslemci()
         komut = adc_oku+komut
         self.parent.KomutGonder(komut)
         
@@ -52,19 +51,24 @@ class SPI_ADC_PANEL(QMainWindow):
         
         
         
+        
+    def Uart2OkumaIslemci(self):
+        self.parent.Uart2_Veri_Oku(True)
+        self.adc_connection = self.parent.uart2_veri_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
 
-    def Uart2OkumaIslemci(self,basla:bool):
-        if basla:
+    # def Uart2OkumaIslemci(self,basla:bool):
+    #     if basla:
+    #         self.adc_okur = self.parent.Uart2ThreadBaslatici(True)
             
-            self.adc_okur = UART3DEGEROKU(uart=self.parent.uart2)
-            self.adc_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
+    #         # self.adc_okur = UART3DEGEROKU(uart=self.parent.uart2)
+    #         self.adc_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
             
-            self.parent.threadpool.start(self.adc_okur,2)
+    # #         # self.parent.threadpool.start(self.adc_okur,3)
 
             
             
-        else:
-            self.adc_okur.baslat = basla
+    #     else:
+    #         self.parent.Uart2ThreadBaslatici(False)
             
 
             
@@ -74,6 +78,8 @@ class SPI_ADC_PANEL(QMainWindow):
         if adc.startswith("AO"):
             adc = adc[2:]
             self.GrafikCiz(adc=adc)
+        
+        # print("adc",self.parent.threadpool.activeThreadCount())
     
     def GrafikCiz(self,adc):
         try:
@@ -95,18 +101,27 @@ class SPI_ADC_PANEL(QMainWindow):
         
     def closeEvent(self,event):
         
-        try: 
-            self.Uart2OkumaIslemci(False)
-        except:
-            pass
+        # try: 
+        #     self.Uart2OkumaIslemci(False)
+        # except:
+        #     pass
    
    
+        # try:
+        self.parent.uart2_veri_okur.signals.disconnect(self.adc_connection)
+        # except:
+        #     pass
+
+        self.parent.Uart2_Veri_Oku(False)
+
 
         adc_oku = self.adc_okuma_dur
         komut = "1111"
         komut = adc_oku+komut
+        # self.parent.KapatmaKomutGonder(komut)
         self.parent.KomutGonder(komut)
         self.parent.adc_panel_acik = False
+        print("adcclose")
         
 
         

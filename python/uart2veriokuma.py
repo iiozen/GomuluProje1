@@ -20,7 +20,13 @@ class UART3DEGEROKU(QRunnable):
     def run(self):
         while self.baslat:
             sicaklik = self.uart.OkuSatir()
-            self.signals.progress.emit(sicaklik)
+            try:
+                self.signals.progress.emit(sicaklik)
+            except:
+                break
             
         if not self.baslat:
-            self.signals.finished.emit()
+            try:
+                self.signals.finished.emit()
+            except:
+                pass
