@@ -2,9 +2,7 @@ from PyQt6.QtWidgets import (
     QMainWindow,QWidget,
     QHBoxLayout, QLabel,
                             )
-from matplotlib.pyplot import autoscale, title
-from degiskenler import  KOMUTLARD,PENCERE_ADLARID,SICAKLIK_STILLERID
-from PyQt6.QtCore import QThread
+from degiskenler import  KOMUTLARD,PENCERE_ADLARID
 from uart2veriokuma import UART3DEGEROKU
 
 import matplotlib
@@ -41,6 +39,7 @@ class SPI_ADC_PANEL(QMainWindow):
         self.setCentralWidget(self.canvas)
         
         
+        
         adc_oku = self.adc_oku
         
         komut = "1111"
@@ -56,16 +55,14 @@ class SPI_ADC_PANEL(QMainWindow):
 
     def Uart2OkumaIslemci(self,basla:bool):
         if basla:
-            self.adc_thread = QThread()
+            
             self.adc_okur = UART3DEGEROKU(uart=self.parent.uart2)
-            self.adc_okur.baslat = basla
-            self.adc_okur.moveToThread(self.adc_thread)
-            self.adc_thread.started.connect(self.adc_okur.run)
-            self.adc_okur.progress.connect(lambda x:self.ADCOkundu(x))
-            self.adc_okur.finished.connect(self.adc_thread.quit)
-            self.adc_okur.finished.connect(self.adc_okur.deleteLater)
-            self.adc_thread.finished.connect(self.adc_thread.deleteLater)
-            self.adc_thread.start()
+            self.adc_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
+            
+            self.parent.threadpool.start(self.adc_okur,2)
+
+            
+            
         else:
             self.adc_okur.baslat = basla
             

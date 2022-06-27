@@ -45,16 +45,15 @@ class SPI_SICAKLIK_KONTROL_PANEL(QMainWindow):
 
     def Uart2OkumaIslemci(self,basla:bool):
         if basla:
-            self.sicaklik_thread = QThread()
+            
             self.sicaklik_okur = UART3DEGEROKU(uart=self.parent.uart2)
-            self.sicaklik_okur.baslat = basla
-            self.sicaklik_okur.moveToThread(self.sicaklik_thread)
-            self.sicaklik_thread.started.connect(self.sicaklik_okur.run)
-            self.sicaklik_okur.progress.connect(lambda x:self.SicaklikOkundu(x))
-            self.sicaklik_okur.finished.connect(self.sicaklik_thread.quit)
-            self.sicaklik_okur.finished.connect(self.sicaklik_okur.deleteLater)
-            self.sicaklik_thread.finished.connect(self.sicaklik_thread.deleteLater)
-            self.sicaklik_thread.start()
+            self.sicaklik_okur.signals.progress.connect(lambda x:self.SicaklikOkundu(x))
+            
+            self.parent.threadpool.start(self.sicaklik_okur,3)
+            
+            
+            
+            
         else:
             self.sicaklik_okur.baslat = basla
 

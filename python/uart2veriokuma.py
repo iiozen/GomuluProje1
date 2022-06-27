@@ -1,16 +1,26 @@
-from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal,QRunnable,pyqtSlot
 from uart import UART
-class UART3DEGEROKU(QObject):
-    progress = pyqtSignal(bytes)
+
+
+class SinyalSinif(QObject):
     finished = pyqtSignal()
+    progress = pyqtSignal(bytes)
+
+
+class UART3DEGEROKU(QRunnable):
+
     def __init__(self,uart:UART):
         super().__init__()
         self.uart = uart
         self.baslat = True
+        
+        self.signals = SinyalSinif()
+        
+    @pyqtSlot()
     def run(self):
-        """Long-running task."""
         while self.baslat:
             sicaklik = self.uart.OkuSatir()
-            self.progress.emit(sicaklik)
+            self.signals.progress.emit(sicaklik)
+            
         if not self.baslat:
-            self.finished.emit()
+            self.signals.finished.emit()

@@ -20,7 +20,7 @@ class I2C_MOTOR_SURUCU(QMainWindow):
         layout_sirali = QHBoxLayout()
     
         
-        motor_hiz_label = QLabel(text = "MOTOR HIZI: ")
+        # motor_hiz_label = QLabel(text = "MOTOR HIZI: ")
         self.motor_hiz = QDial()
         self.motor_hiz.setMinimum(0)
         self.motor_hiz.setMaximum(4095)
@@ -28,7 +28,7 @@ class I2C_MOTOR_SURUCU(QMainWindow):
         self.motor_hiz.sliderReleased.connect(self.MotorHizYaz)
         self.delay_deger = QLabel()
         self.delay_deger.setText(f"%{(self.motor_hiz.value()*100/4095):>05.1f}")
-        layout_sirali.addWidget(motor_hiz_label)
+        # layout_sirali.addWidget(motor_hiz_label)
         layout_sirali.addWidget(self.motor_hiz)
         layout_sirali.addWidget(self.delay_deger)
  
@@ -38,7 +38,7 @@ class I2C_MOTOR_SURUCU(QMainWindow):
         layoutv.addLayout(layout_sirali)
         
         widget.setLayout(layoutv)
-        widget.setMinimumSize(500,200)
+        # widget.setMinimumSize(500,200)
         
         
         

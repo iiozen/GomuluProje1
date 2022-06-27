@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (
                             QLayout, QGridLayout, QHBoxLayout
                             )
 
-from PyQt6.QtCore import Qt, QTimer,QRect,QThread
+from PyQt6.QtCore import Qt, QTimer,QRect,QThreadPool
 from led_kontrol_panel import Led_Kontrol_Panel
 from i2c_motor_surucu import I2C_MOTOR_SURUCU
 from spi_sicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
@@ -27,6 +27,8 @@ class AnaPencere(QMainWindow):
         super().__init__()
 
         self.TanimlarBaslangic()
+
+        self.threadpool = QThreadPool()
 
         ### TÜM WİDGETLERİN PARENTİ OLACAK WİDGET
         ustwidget = QWidget()
@@ -536,16 +538,13 @@ class AnaPencere(QMainWindow):
         label = DEGISENLABELD["LABEL"]  
         if self.uart1.baglandi:
             self.komut = Komut(uart= self.uart1,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
-            self.baglanti_thread = QThread()
+            
             self.baglanti_arar = UART1BAGLANTI(komut=self.komut)
-            self.baglanti_arar.moveToThread(self.baglanti_thread)
-            self.baglanti_thread.started.connect(self.baglanti_arar.run)
-            self.baglanti_arar.finished.connect(lambda cevap:self.BasariDurum(basari=cevap))
-            self.baglanti_arar.finished.connect(self.baglanti_thread.quit)
-            self.baglanti_arar.finished.connect(self.baglanti_arar.deleteLater)
-            self.baglanti_thread.finished.connect(self.baglanti_thread.deleteLater)
-            self.baglanti_thread.start()
-            # basari = self.komut.Haberles(KOMUTLARD["BAGLANTI"])
+            self.baglanti_arar.signals.finished.connect(lambda x:self.BasariDurum(x))
+            
+                        
+            self.threadpool.start(self.baglanti_arar,1)
+            
 
 
         else:
