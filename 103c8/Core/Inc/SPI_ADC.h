@@ -8,7 +8,7 @@
 
 
 
-//extern float adc_deger;
+
 extern int SPI_ADC_OKU;
 
 

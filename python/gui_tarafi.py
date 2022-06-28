@@ -1,12 +1,11 @@
-from tkinter import Frame
 from PyQt6.QtWidgets import (
                             QMainWindow, QPushButton, QVBoxLayout,
-                            QWidget , QRadioButton,QFormLayout,
-                            QLineEdit, QLabel, QFrame,
+                            QWidget ,QFormLayout,
+                            QLineEdit, QLabel,
                             QLayout, QGridLayout, QHBoxLayout
                             )
 
-from PyQt6.QtCore import Qt, QTimer,QRect,QThreadPool
+from PyQt6.QtCore import Qt, QTimer,QThreadPool
 from led_kontrol_panel import Led_Kontrol_Panel
 from i2c_motor_surucu import I2C_MOTOR_SURUCU
 from spi_sicaklik_panel import SPI_SICAKLIK_KONTROL_PANEL
@@ -191,53 +190,12 @@ class AnaPencere(QMainWindow):
         self.giristeki = 0
         self.komutlargonderiliyor = False
 
-
-    # def KapatmaKomutGonder(self,komut:str):
-    #     print("komutkapatma:")
-    #     komut = self.komut.GonderimHazirla(komut)
-    #     self.uart1.Yaz(komut)
-    #     print("komutkapatmac:")
-        
-    # def KomutGonder(self,komut:str):
-    #     print("komut:")
-    #     if not self.komutlargonderiliyor:
-    #         self.komutlargonderiliyor = True
-    #         self.komut_gonderici = UART1BAGLANTI(komut=self.komut,komutcu=komut)
-    #         self.komut_gonderici.signals.finished.connect(lambda x:self.KomutGonderv2(x))
-    #         self.threadpool.start(self.komut_gonderici,2)
-    #         print("komutson:")
-
-    # def KomutGonderv2(self,basari:bool):
-    #     print("komutv2:",basari)
-    #     if not basari:
-    #         self.Panel_Butonlar(False)
-    #         self.Baglanti()
-    #     self.komutlargonderiliyor = False
-            
     def KomutGonder(self,komut:str):
         basari = self.komut.Haberles(komut)
         if not basari:
             self.Panel_Butonlar(basari)
             self.Baglanti()
             
-            
-
-
-
-    # def Uart2ThreadBaslatici(self,olustur:bool):
-    #     self.uart2_thread = UART3DEGEROKU(uart=self.uart2)
-    #     if olustur and not self.olusturuldu:
-    #         self.olusturuldu = True
-    #         self.kapatildi = False
-    #         self.threadpool.start(self.uart2_thread,3)
-    #     elif not olustur and self.kapatildi:
-    #         self.kapatildi = True
-    #         self.olusturuldu = False
-    #         self.uart2_thread.baslat = False
-
-    #     return self.uart2_thread
-
-
 
     def Led_Secim(self,secim:str):
         self.led_secim = secim
@@ -551,20 +509,6 @@ class AnaPencere(QMainWindow):
         panel.move(panel_x,panel_y)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def BaglantiButonConnect(self):
         if self.baglanti_buton_basildi:
             self.BaglantiDurdur()
@@ -585,7 +529,6 @@ class AnaPencere(QMainWindow):
         buton = DEGISENLABELD["BUTON"]
         label = DEGISENLABELD["LABEL"]
         if self.uart1.baglandi:
-            print("bg,bas:",self.threadpool.activeThreadCount())
             if not self.uart1_baglanti:
                 self.uart1_baglanti = True
                 self.komut = Komut(uart= self.uart1,zamanasimi=HABERLESD["ZAMAN_ASIMI"])
@@ -593,21 +536,6 @@ class AnaPencere(QMainWindow):
                 self.baglanti_arar = UART1BAGLANTI(komut=self.komut)
                 self.baglanti_arar.signals.finished.connect(lambda x:self.BasariDurum(x))
                 self.threadpool.start(self.baglanti_arar,1)
-
-            # if  self.uart2.baglandi and not self.ilk_basari:
-            #     print("başladı")
-            #     self.ilk_basari = True
-            #     self.uart2_veri_okur = UART3DEGEROKU(uart=self.uart2)
-            #     self.uart2_veri_okur.signals.progress.connect(lambda x:self.ADC_Gonderim(x))
-            #     self.uart2_veri_okur.signals.progress.connect(lambda x:self.Sicaklik_Gonderim(x))
-            #     self.threadpool.start(self.uart2_veri_okur,1)
-            print("bg,son:",self.threadpool.activeThreadCount())
-
-
-
-
-
-
         else:
             self.Basarisiz(buton=buton,label=label)
 
@@ -624,7 +552,6 @@ class AnaPencere(QMainWindow):
             self.giristeki +=1
         else:
             self.giristeki -=1
-        print("giris",self.threadpool.activeThreadCount())
         if oku and not self.ilk_basari:
             self.ilk_basari = True
             self.uart2_veri_okur = UART3DEGEROKU(uart=self.uart2)
@@ -632,7 +559,6 @@ class AnaPencere(QMainWindow):
         elif not oku and self.giristeki==0:
             self.ilk_basari= False
             self.uart2_veri_okur.baslat = False
-        print("u2voku:",self.threadpool.activeThreadCount())
 
             
             
@@ -658,10 +584,7 @@ class AnaPencere(QMainWindow):
                 self.timer.start(timeout)
             else:
                 self.timer.stop()
-        # else:
-        #     timci = QTimer()
-        #     timci.start(100)
-        #     timci.timeout.connect(lambda x:self.StartStopTimer(start))
+
             
             
 

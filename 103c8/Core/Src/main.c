@@ -232,48 +232,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 
 
-
-		/*
-		  if(tim2_sayici_adc >= SPI_ADC_OKUMA_DELAY)
-		  {
-			  tim2_sayici_adc = 0;
-		if (SPI_SICAKLIK_OKU)
-		  {
-
-				  tim2_sayici_sicaklik = 0;
-				  tim2_sayici_adc = 0;
-				  SPI_SICAKLIK_ISLEMLER();
-
-			sprintf(sicaklik_adc,"SO%.4f",sicaklik);
-
-		  }
-		else
-		{
-			strcpy(sicaklik_adc,"SONone");
-
-		}
-		if (SPI_ADC_OKU)
-		  {
-
-				  SPI_ADC_ISLEMLER();
-
-				  uzunlukverisi=sprintf(sicaklik_adc,"%s;AO%.3f\n",sicaklik_adc,adc_deger);
-
-		  }
-		else
-		{
-			uzunlukverisi=sprintf(sicaklik_adc,"%s;AO%s\n\r",sicaklik_adc,"None");
-		}
-		if (SPI_SICAKLIK_OKU | SPI_ADC_OKU)
-		{
-			HAL_UART_Transmit(&huart3, sicaklik_adc, uzunlukverisi, HAL_MAX_DELAY);
-		}
-		  }
-		  */
-
-
-
-
 	}
 
 }

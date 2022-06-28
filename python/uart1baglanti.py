@@ -20,4 +20,3 @@ class UART1BAGLANTI(QRunnable):
     def run(self):
         cevap = self.komut.Haberles(self.komutcu)
         self.signals.finished.emit(cevap)
-        print("bağlantı deniyorum")

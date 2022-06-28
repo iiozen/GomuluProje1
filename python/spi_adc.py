@@ -1,7 +1,5 @@
 from PyQt6.QtWidgets import (
-    QMainWindow,QWidget,
-    QHBoxLayout, QLabel,
-                            )
+    QMainWindow        )
 from degiskenler import  KOMUTLARD,PENCERE_ADLARID
 
 import matplotlib
@@ -34,10 +32,7 @@ class SPI_ADC_PANEL(QMainWindow):
         
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
         
-        
         self.setCentralWidget(self.canvas)
-        
-        
         
         adc_oku = self.adc_oku
         
@@ -56,22 +51,6 @@ class SPI_ADC_PANEL(QMainWindow):
         self.parent.Uart2_Veri_Oku(True)
         self.adc_connection = self.parent.uart2_veri_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
 
-    # def Uart2OkumaIslemci(self,basla:bool):
-    #     if basla:
-    #         self.adc_okur = self.parent.Uart2ThreadBaslatici(True)
-            
-    #         # self.adc_okur = UART3DEGEROKU(uart=self.parent.uart2)
-    #         self.adc_okur.signals.progress.connect(lambda x:self.ADCOkundu(x))
-            
-    # #         # self.parent.threadpool.start(self.adc_okur,3)
-
-            
-            
-    #     else:
-    #         self.parent.Uart2ThreadBaslatici(False)
-            
-
-            
             
     def ADCOkundu(self,adc):
         adc = str(adc,"utf-8")
@@ -79,8 +58,6 @@ class SPI_ADC_PANEL(QMainWindow):
             adc = adc[2:]
             self.GrafikCiz(adc=adc)
         
-        # print("adc",self.parent.threadpool.activeThreadCount())
-    
     def GrafikCiz(self,adc):
         try:
             adc = float(adc)
@@ -88,11 +65,10 @@ class SPI_ADC_PANEL(QMainWindow):
                 self.adc_liste = self.adc_liste[1:] + [adc]
             else:
                 self.adc_liste.append(adc)
-            self.canvas.axes.cla()  # Clear the canvas.
+            self.canvas.axes.cla()
             self.canvas.axes.plot(self.adc_grafik_x, self.adc_liste_beyaz, 'w')
             uz = list(range(len(self.adc_liste)))
             self.canvas.axes.plot(uz, self.adc_liste, 'r')
-            # Trigger the canvas to update and redraw.
             self.canvas.draw()   
         except:
             pass
@@ -100,28 +76,15 @@ class SPI_ADC_PANEL(QMainWindow):
 
         
     def closeEvent(self,event):
-        
-        # try: 
-        #     self.Uart2OkumaIslemci(False)
-        # except:
-        #     pass
-   
-   
-        # try:
         self.parent.uart2_veri_okur.signals.disconnect(self.adc_connection)
-        # except:
-        #     pass
 
         self.parent.Uart2_Veri_Oku(False)
-
 
         adc_oku = self.adc_okuma_dur
         komut = "1111"
         komut = adc_oku+komut
-        # self.parent.KapatmaKomutGonder(komut)
         self.parent.KomutGonder(komut)
         self.parent.adc_panel_acik = False
-        print("adcclose")
         
 
         

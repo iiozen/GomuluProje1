@@ -1,5 +1,4 @@
 from PyQt6.QtWidgets import QFrame,QWidget
-from PyQt6.QtCore import QRect
 from stil import Stil
 
 class FrameOlustur(QFrame):

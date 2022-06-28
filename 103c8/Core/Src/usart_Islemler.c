@@ -10,7 +10,6 @@
  * UART1'DEN GELEN KOMUTA GÖRE YAPILACAK İŞLEMLERİ BELİRLEYEN
  * VE SON KOMUTUN STRİNG DEĞERİNİ DÖNDÜREN FONKSİYON
  */
-//char* Yap(char* uart1,char* son_komut)
 int Yap(char* uart1)
 {
 
@@ -18,8 +17,6 @@ int Yap(char* uart1)
 	char* islem = uart1[1];
 	int donus = 0;
 
-	//if(strcmp(uart1,son_komut)  != 0)
-	//{
 		/*
 		 * İŞLEM GELEN VERİNİN İLK HARFİNDEN OKUNUR
 		 */

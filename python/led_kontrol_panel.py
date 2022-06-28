@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import (
-    QMainWindow,QWidget,QVBoxLayout,QRadioButton,QPushButton,
-    QHBoxLayout,QGridLayout, QSlider, QLabel
+    QMainWindow,QWidget,QVBoxLayout,QPushButton,
+    QHBoxLayout, QSlider, QLabel
                             )
-from degiskenler import GUI_LABELD, KOMUTLARD,PENCERE_ADLARID
+from degiskenler import  KOMUTLARD,PENCERE_ADLARID
 from PyQt6.QtCore import Qt
 
 class Led_Kontrol_Panel(QMainWindow):
@@ -32,7 +32,6 @@ class Led_Kontrol_Panel(QMainWindow):
         self.ButonOlustur(layout=layout_orta,text="HEPSİ",secim="HEPSI")
         
         layout_sirali = QHBoxLayout()
-        # self.ButonOlustur(layout=layout_sirali,text="ARTIRMALI",secim=None)
         self.artirmali_buton = QPushButton(text="SIRALI")
         self.artirmali_buton.setCheckable(True)
         self.artirmali_buton.clicked.connect(lambda x:self.ButonBasildi(
@@ -73,7 +72,6 @@ class Led_Kontrol_Panel(QMainWindow):
         gelen = self.delay_hiz.value()
         gelen = str(gelen)
         self.delay_deger.setText("%d ms"%self.delay_hiz.value())
-        # if self.artirmali_buton.isChecked():
         led_secim = self.led_delay
         if len(gelen)==3:
             gelen = "0"+gelen

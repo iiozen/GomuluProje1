@@ -1,8 +1,4 @@
 import sys
-
-from uart import UART
-from degiskenler import UARTD
-
 from gui_tarafi import AnaPencere
 
 from PyQt6.QtWidgets import QApplication

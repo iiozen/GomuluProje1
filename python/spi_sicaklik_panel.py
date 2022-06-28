@@ -44,23 +44,6 @@ class SPI_SICAKLIK_KONTROL_PANEL(QMainWindow):
         self.parent.Uart2_Veri_Oku(True)
         self.sicaklik_connection = self.parent.uart2_veri_okur.signals.progress.connect(lambda x:self.SicaklikOkundu(x))
         
-
-    # def Uart2OkumaIslemci(self,basla:bool):
-    #     if basla:
-    #         self.sicaklik_okur = self.parent.Uart2ThreadBaslatici(True)
-            
-    #         # self.sicaklik_okur = UART3DEGEROKU(uart=self.parent.uart2)
-    #         self.sicaklik_okur.signals.progress.connect(lambda x:self.SicaklikOkundu(x))
-            
-    #         # self.parent.threadpool.start(self.sicaklik_okur,3)
-            
-            
-            
-            
-    #     else:
-    #         self.parent.Uart2ThreadBaslatici(False)
-
-            
             
     def SicaklikOkundu(self,sicaklik):
         sicaklik = str(sicaklik,"utf-8")
@@ -68,7 +51,6 @@ class SPI_SICAKLIK_KONTROL_PANEL(QMainWindow):
             sicaklik = sicaklik[2:-1] + " ℃"
             self.sicaklik_deger_.setText("      "+sicaklik)
             self.YaziRenginiBelirle(sicaklik=sicaklik)
-        # print("sicaklik",self.parent.threadpool.activeThreadCount())
     
     def YaziRenginiBelirle(self,sicaklik):
         try:
@@ -114,13 +96,6 @@ class SPI_SICAKLIK_KONTROL_PANEL(QMainWindow):
             pass
         
     def closeEvent(self,event):
-        
-        
-        # try: 
-        #     self.Uart2OkumaIslemci(False)
-        # except:
-        #     pass
- 
         self.parent.uart2_veri_okur.signals.disconnect(self.sicaklik_connection)
    
 
@@ -129,8 +104,6 @@ class SPI_SICAKLIK_KONTROL_PANEL(QMainWindow):
         sicaklik_oku = self.sicaklik_okuma_dur
         komut = "1111"
         komut = sicaklik_oku+komut
-        # self.parent.KapatmaKomutGonder(komut)
         self.parent.KomutGonder(komut)
         self.parent.sicaklik_kontrol_panel_acik = False
-        print("spiclose")
         

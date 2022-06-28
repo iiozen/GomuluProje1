@@ -10,7 +10,6 @@
 #define SPI_SICAKLIK_OKUMA_DELAY 300
 
 
-//extern float sicaklik;
 
 extern int SPI_SICAKLIK_OKU;
 
