@@ -9,8 +9,11 @@
 
 ### PROTEUS PROJESİNİN TASARIM GÖRÜNTÜSÜ
 ![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/proteus.png)
-
-
+<br>
+<br>
+**ÖNEMLİ:** *Sıcaklık okuma Sensörün veriyi dönüştürmesinin 300ms sürmesinden dolayı 300ms, ADC değerinin okunması ise 100ms'de bir yapılmaktadır. Ancak Proteusta geçen simülasyon zamanı gerçek zaman ile aynı olmayabilir bu yüzden buradaki değerlerin simülasyon içerisinde gerçekleşme zamanı değişiklik gösterebilir.*
+<br>
+<br>
 ### LED KONTROL PANELİ 
 
 ![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/led_kontrol_panel.gif)
