@@ -161,7 +161,8 @@ class AnaPencere(QMainWindow):
 
         # Ana Widget Ayarları
         self.setCentralWidget(ustwidget)
-        self.setGeometry(500,300,960,540)
+        self.setGeometry(500,300,960,340)
+        self.setFixedSize(960,340)
         self.setWindowTitle("Gömülü yazılım")
 
 

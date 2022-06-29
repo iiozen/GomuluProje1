@@ -3,6 +3,8 @@
 !proteus
 !103c8
 !python
+!README.md
+!png-gif
 
 # 103c8 Dosyası
 103c8/*
@@ -29,3 +31,4 @@ proteus/*
 python/*
 !python/**.py
 !python/requirements.txt
+!python/README.md
