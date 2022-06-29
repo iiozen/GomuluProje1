@@ -13,7 +13,7 @@
 
 ### LED KONTROL PANELİ 
 
-![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/adc_okuma_panel.gif)
+![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/led_kontrol_panel.gif)
 
 ### MOTOR KONTROL PANELİ 
 
