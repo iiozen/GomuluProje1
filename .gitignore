@@ -32,3 +32,6 @@ python/*
 !python/**.py
 !python/requirements.txt
 !python/README.md
+
+# pgn-gif Dosyası
+!png-gif/*
