@@ -7,6 +7,10 @@
     * USART
 
 
+### PROTEUS PROJESİNİN TASARIM GÖRÜNTÜSÜ
+![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/proteus.png)
+
+
 ### LED KONTROL PANELİ 
 
 ![](https://github.com/iiozen/GomuluProje1/blob/master/png-gif/adc_okuma_panel.gif)
